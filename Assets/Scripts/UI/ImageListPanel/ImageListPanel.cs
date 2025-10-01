@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
@@ -16,7 +13,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         public string name;
         public Sprite sprite;
-        [TextArea]public string description;
+        public string description;
 
         public ItemInfo(Sprite sprite, string description,string name)
         {
@@ -32,8 +29,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private RectTransform itemParent;
     [SerializeField,Tooltip("描述文字")]
     private TMP_Text descriptionText;
-    [SerializeField,Tooltip("名字文字")]
-    private TMP_Text nameText;
     [SerializeField,Tooltip("子物体信息")]
     private ItemInfo[] itemInfos;
     [SerializeField,Tooltip("显示数量(尽量填奇数)")] 
@@ -56,10 +51,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float minScale = 0.5f;
     [SerializeField,Tooltip("最大缩放比例")] 
     private float maxScale = 2.0f;
-
-    public GameObject descriptionBar;
-    private bool isOpenDescription = false;
-    public Button escButton;
 
     public enum ScreenAdaptationMode
     {
@@ -91,56 +82,17 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         // 记录原始屏幕尺寸
         originalScreenSize = new Vector2(Screen.width, Screen.height);
         currentScreenSize = originalScreenSize;
-
     }
 
     private void Start()
     {
-        // Init() is now called in OnEnable() after screen scale is calculated.
-    }
-    
-    private void OnEnable()
-    {
+        Init();
         CalculateScreenScale();
-        ApplyScreenScale();
-        
-        // Ensure itemParent is at a known position before initializing items
-        itemParent.localPosition = Vector3.zero;
-        offsetTimes = 0; // Reset offsetTimes as well
-
-        Init(); // Initialize items
-        RefreshUI(); // Position and control items based on initial state
-
-        // Force a canvas update to ensure all layout elements are processed immediately
-        Canvas.ForceUpdateCanvases();
+        MoveItems(0);
     }
 
-    // Removed DelayedRefresh coroutine as its logic is now integrated into OnEnable()
-    // private IEnumerator DelayedRefresh()
-    // {
-    //     // 等待一帧，确保 RectTransform 和 Layout 已经更新
-    //     // yield return null;
-    //
-    //     // 确保 itemParent 初始化到正确位置
-    //     // offsetTimes = 0;
-    //     // itemParent.localPosition = Vector3.zero;
-    //
-    //     // 先刷新一次
-    //     // RefreshUI();
-    //
-    //     // 再强制刷新 Canvas 布局，避免第一次错位
-    //     // Canvas.ForceUpdateCanvases();
-    //     // ItemControl(); // Redundant call
-    // }
     private void Update()
     {
-        if(!gameObject.activeSelf)
-            return;
-        descriptionBar.SetActive(isOpenDescription);
-     
-        //TODO:count按照场景顺序来解锁
-        UnLockItemsBlur(2);
-        
         // 检查屏幕尺寸是否发生变化
         CheckScreenSizeChange();
         
@@ -163,8 +115,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     /// </summary>
     private void Init()
     {
-        if(items != null)
-            return;
         displayWidth = (displayNumber -1) * itemSpace;
         items = new SelectHorizontalScrollItem[displayNumber];
         for (var i = 0; i < displayNumber; i++)
@@ -231,8 +181,30 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         {
             currentScreenSize = newScreenSize;
             CalculateScreenScale();
-            RefreshUI();
         }
+    }
+
+    /// <summary>
+    /// 设置子物体信息(测试用)
+    /// </summary>
+    /// <param name="names">名称</param>
+    /// <param name="sprites">图片</param>
+    /// <param name="descriptions">描述</param>
+    public void SetItemInfo(string[] names, Sprite[] sprites, string[] descriptions)
+    {
+        if (names.Length != sprites.Length || sprites.Length != descriptions.Length || names.Length != descriptions.Length)
+        {
+            Debug.LogError("选择数据不完整");
+            return;
+        }
+        
+        itemInfos = new ItemInfo[names.Length];
+        for (var i = 0; i < itemInfos.Length; i++)
+        {
+            itemInfos[i] = new ItemInfo(sprites[i],descriptions[i],names[i]);
+        }
+
+        isSelected = false;
     }
 
     /// <summary>
@@ -244,10 +216,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     public void Select(int itemIndex,int infoIndex,RectTransform itemRectTransform)
     {
         if (!isSelected && itemIndex == currentItemIndex)
-        {
             isSelected = true;
-            isOpenDescription = true;
-        }
         else
         {
             isSelectMove = true;
@@ -329,9 +298,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             }
         }
         descriptionText.text = items[minIndex].description;
-        // var newName = items[minIndex].nameText.text.Aggregate("", (current, s) => current + (s + "\n"));
-        // nameText.text = newName + " 信\n息\n ";
-        nameText.text = items[minIndex].nameText.text + "信息";
         currentItemIndex = items[minIndex].itemIndex;
     }
     
@@ -382,45 +348,44 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             eventData.delta.x * dragSpeed,itemParent.localPosition.y);
     }
 
-    public void UnLockItemsBlur(int count)
+    /// <summary>
+    /// 设置屏幕适配模式
+    /// </summary>
+    /// <param name="mode">适配模式</param>
+    public void SetAdaptationMode(ScreenAdaptationMode mode)
     {
-        for (int i = 0; i < count; i++)
-        {
-            foreach (var item in items)
-            {
-                item.blurController.SetBlurRadius(item.infoIndex <= count ? 0 : 20);
-            }
-        }
+        adaptationMode = mode;
+        CalculateScreenScale();
     }
-    
-    public void SetCenterItem(int targetIndex)
+
+    /// <summary>
+    /// 启用或禁用屏幕适配
+    /// </summary>
+    /// <param name="enable">是否启用</param>
+    public void SetScreenAdaptation(bool enable)
     {
-        // 找到目标 item
-        var targetItem = items.FirstOrDefault(i => i.infoIndex == targetIndex);
-        if (targetItem == null)
-        {
-            Debug.LogWarning($"未找到 infoIndex = {targetIndex} 的 item");
-            return;
-        }
-
-        // 目标 item 的 X 位置
-        selectItemX = targetItem.rectTransform.localPosition.x;
-
-        // 标记成选择移动模式，让 Adsorption() 把它平滑移到中间
-        isSelectMove = true;
-
-        // 强制刷新一次，避免 UI 卡帧
-        Adsorption();
+        enableScreenAdaptation = enable;
+        CalculateScreenScale();
     }
-    
-    public void RefreshUI()
-    {
-        // Init() is now called in OnEnable(), no need to check here.
-        // if (items == null || items.Length == 0)
-        //     Init();
 
-        // 重新刷一遍 item 数据
-        MoveItems(offsetTimes);
-        ItemControl();
+    /// <summary>
+    /// 设置缩放范围
+    /// </summary>
+    /// <param name="min">最小缩放</param>
+    /// <param name="max">最大缩放</param>
+    public void SetScaleRange(float min, float max)
+    {
+        minScale = min;
+        maxScale = max;
+        CalculateScreenScale();
+    }
+
+    /// <summary>
+    /// 获取当前屏幕缩放比例
+    /// </summary>
+    /// <returns>当前缩放比例</returns>
+    public float GetCurrentScreenScale()
+    {
+        return screenScale;
     }
 }
