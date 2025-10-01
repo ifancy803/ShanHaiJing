@@ -350,19 +350,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u540D\u79F0"
   m_isRightToLeft: 0
-<<<<<<< HEAD
-  m_fontAsset: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
-  m_sharedMaterial: {fileID: -7577199923722714637, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
-=======
   m_fontAsset: {fileID: 11400000, guid: 2b5a0db9f4bb6e84f86d700437060596, type: 2}
   m_sharedMaterial: {fileID: -2680644882813737459, guid: 2b5a0db9f4bb6e84f86d700437060596, type: 2}
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> parent of 6ace1f2 (2025.10.1)
-=======
->>>>>>> parent of 6ace1f2 (2025.10.1)
-=======
->>>>>>> parent of 6ace1f2 (2025.10.1)
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
