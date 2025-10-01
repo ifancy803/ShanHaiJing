@@ -43,6 +43,22 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float scaleMultiplying;
     [SerializeField,Tooltip("透明度倍率")] 
     private float alphaMultiplying;
+    [SerializeField,Tooltip("是否启用屏幕适配")] 
+    private bool enableScreenAdaptation = true;
+    [SerializeField,Tooltip("屏幕适配模式")] 
+    private ScreenAdaptationMode adaptationMode = ScreenAdaptationMode.FitWidth;
+    [SerializeField,Tooltip("最小缩放比例")] 
+    private float minScale = 0.5f;
+    [SerializeField,Tooltip("最大缩放比例")] 
+    private float maxScale = 2.0f;
+
+    public enum ScreenAdaptationMode
+    {
+        FitWidth,    // 适配宽度
+        FitHeight,    // 适配高度
+        FitBoth,     // 同时适配宽高
+        None         // 不进行适配
+    }
 
     private SelectHorizontalScrollItem[] items;
     private float displayWidth;
@@ -54,23 +70,37 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private bool isSelectMove;
 
     private bool isSelected;
+    
+    // 屏幕适配相关变量
+    private float screenScale = 1f;
+    private Vector2 originalScreenSize;
+    private Vector2 currentScreenSize;
 
     private void Awake()
     {
         displayNumber = itemInfos.Length;
+        // 记录原始屏幕尺寸
+        originalScreenSize = new Vector2(Screen.width, Screen.height);
+        currentScreenSize = originalScreenSize;
     }
 
     private void Start()
     {
         Init();
+        CalculateScreenScale();
         MoveItems(0);
     }
 
     private void Update()
     {
+        // 检查屏幕尺寸是否发生变化
+        CheckScreenSizeChange();
+        
         if (!isDrag)
             Adsorption();
-        int currentOffsetTimes = Mathf.FloorToInt(itemParent.localPosition.x / itemSpace);
+        
+        // 修复offsetTimes计算，确保吸附后正确更新items
+        int currentOffsetTimes = Mathf.RoundToInt(itemParent.localPosition.x / (itemSpace * screenScale));
         if (currentOffsetTimes != offsetTimes)
         {
             offsetTimes = currentOffsetTimes;
@@ -96,7 +126,66 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     }
 
     /// <summary>
-    /// 设置子物体信息
+    /// 计算屏幕缩放比例
+    /// </summary>
+    private void CalculateScreenScale()
+    {
+        if (!enableScreenAdaptation || adaptationMode == ScreenAdaptationMode.None)
+        {
+            screenScale = 1f;
+            return;
+        }
+
+        Vector2 currentScreen = new Vector2(Screen.width, Screen.height);
+        float scaleX = currentScreen.x / originalScreenSize.x;
+        float scaleY = currentScreen.y / originalScreenSize.y;
+
+        switch (adaptationMode)
+        {
+            case ScreenAdaptationMode.FitWidth:
+                screenScale = scaleX;
+                break;
+            case ScreenAdaptationMode.FitHeight:
+                screenScale = scaleY;
+                break;
+            case ScreenAdaptationMode.FitBoth:
+                screenScale = Mathf.Min(scaleX, scaleY);
+                break;
+        }
+
+        // 限制缩放范围
+        screenScale = Mathf.Clamp(screenScale, minScale, maxScale);
+        
+        // 应用缩放
+        ApplyScreenScale();
+    }
+
+    /// <summary>
+    /// 应用屏幕缩放
+    /// </summary>
+    private void ApplyScreenScale()
+    {
+        if (itemParent != null)
+        {
+            itemParent.localScale = Vector3.one * screenScale;
+        }
+    }
+
+    /// <summary>
+    /// 检查屏幕尺寸变化
+    /// </summary>
+    private void CheckScreenSizeChange()
+    {
+        Vector2 newScreenSize = new Vector2(Screen.width, Screen.height);
+        if (newScreenSize != currentScreenSize)
+        {
+            currentScreenSize = newScreenSize;
+            CalculateScreenScale();
+        }
+    }
+
+    /// <summary>
+    /// 设置子物体信息(测试用)
     /// </summary>
     /// <param name="names">名称</param>
     /// <param name="sprites">图片</param>
@@ -141,32 +230,44 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     /// <param name="offsetTimes">偏移次数</param>
     private void MoveItems(int offsetTimes)
     {
+        // 计算缩放后的间距
+        float scaledItemSpace = itemSpace * screenScale;
+        float scaledDisplayWidth = displayWidth * screenScale;
+        
         for (int i = 0; i < displayNumber; i++)
         {
-            float x = itemSpace * (i - offsetTimes) - displayWidth / 2;
+            float x = scaledItemSpace * (i - offsetTimes) - scaledDisplayWidth / 2;
             items[i].transform.localPosition = new Vector2(x, items[i].rectTransform.localPosition.y);
         }
 
+        // 修复索引计算逻辑
         int middle;
-        if(offsetTimes > 0)
-            middle = itemInfos.Length - offsetTimes % itemInfos.Length;
+        if (offsetTimes >= 0)
+        {
+            middle = itemInfos.Length - (offsetTimes % itemInfos.Length);
+        }
         else
-            middle = -offsetTimes % itemInfos.Length;
+        {
+            middle = (-offsetTimes) % itemInfos.Length;
+        }
         
+        // 设置中间及右侧的items
         int infoIndex = middle;
         for (int i = Mathf.FloorToInt(displayNumber/2f); i < displayNumber; i++)
         {
-            if(infoIndex >= itemInfos.Length)
+            if (infoIndex >= itemInfos.Length)
                 infoIndex = 0;
-            items[i].SetInfo(itemInfos[infoIndex].sprite,itemInfos[infoIndex].name,itemInfos[infoIndex].description,infoIndex,this);
+            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description, infoIndex, this);
             infoIndex++;
         }
+        
+        // 设置左侧的items
         infoIndex = middle - 1;
-        for (int i = Mathf.FloorToInt(displayNumber/2f) - 1; i >=0; i--)
+        for (int i = Mathf.FloorToInt(displayNumber/2f) - 1; i >= 0; i--)
         {
-            if(infoIndex <= -1)
-                infoIndex = itemInfos.Length -1;
-            items[i].SetInfo(itemInfos[infoIndex].sprite,itemInfos[infoIndex].name,itemInfos[infoIndex].description,infoIndex,this);
+            if (infoIndex < 0)
+                infoIndex = itemInfos.Length - 1;
+            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description, infoIndex, this);
             infoIndex--;
         }
     }
@@ -208,27 +309,26 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         float targetX;
         if (!isSelectMove)
         {
-            float distance = itemParent.localPosition.x % itemSpace;
-            int times = Mathf.FloorToInt(itemParent.localPosition.x / itemSpace);
-            if (distance > 0)
+            // 修复吸附计算逻辑，确保吸附到最近的itemSpace位置
+            float currentX = itemParent.localPosition.x;
+            float scaledItemSpace = itemSpace * screenScale;
+            float remainder = currentX % scaledItemSpace;
+        
+            if (Mathf.Abs(remainder) < scaledItemSpace * 0.5f)
             {
-                if(distance < itemSpace /2)
-                    targetX = times * itemSpace;
-                else
-                    targetX = (times + 1) * itemSpace;
+                // 距离当前位置更近
+                targetX = currentX - remainder;
             }
             else
             {
-                if(distance < -itemSpace / 2)
-                    targetX = times * itemSpace;
-                else
-                    targetX = (times + 1) * itemSpace;
+                // 距离下一个位置更近
+                targetX = currentX + (scaledItemSpace - remainder) * Mathf.Sign(remainder);
             }
         }
         else
             targetX = -selectItemX;
-        
-        itemParent.localPosition = new Vector2(Mathf.Lerp(itemParent.localPosition.x,targetX,moveSmooth / 10),itemParent.localPosition.y);
+    
+        itemParent.localPosition = new Vector2(Mathf.Lerp(itemParent.localPosition.x, targetX, moveSmooth / 10), itemParent.localPosition.y);
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -246,5 +346,46 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         isSelectMove = false;
         itemParent.localPosition = new Vector2(itemParent.localPosition.x +
             eventData.delta.x * dragSpeed,itemParent.localPosition.y);
+    }
+
+    /// <summary>
+    /// 设置屏幕适配模式
+    /// </summary>
+    /// <param name="mode">适配模式</param>
+    public void SetAdaptationMode(ScreenAdaptationMode mode)
+    {
+        adaptationMode = mode;
+        CalculateScreenScale();
+    }
+
+    /// <summary>
+    /// 启用或禁用屏幕适配
+    /// </summary>
+    /// <param name="enable">是否启用</param>
+    public void SetScreenAdaptation(bool enable)
+    {
+        enableScreenAdaptation = enable;
+        CalculateScreenScale();
+    }
+
+    /// <summary>
+    /// 设置缩放范围
+    /// </summary>
+    /// <param name="min">最小缩放</param>
+    /// <param name="max">最大缩放</param>
+    public void SetScaleRange(float min, float max)
+    {
+        minScale = min;
+        maxScale = max;
+        CalculateScreenScale();
+    }
+
+    /// <summary>
+    /// 获取当前屏幕缩放比例
+    /// </summary>
+    /// <returns>当前缩放比例</returns>
+    public float GetCurrentScreenScale()
+    {
+        return screenScale;
     }
 }
