@@ -22,20 +22,20 @@ public class DraggablePiece : MonoBehaviour
         originalSortingOrder = spriteRenderer.sortingOrder;
     }
 
-    // ★★★ 新增：由 InputManager 调用 ★★★
+
     public void OnDragStart()
     {
         // 提高渲染层级, 使其在拖拽时显示在最上层
         spriteRenderer.sortingOrder = sortingOrderWhileDragging;
     }
 
-    // ★★★ 新增：由 InputManager 调用 ★★★
+
     public void OnDragging(Vector3 newPosition)
     {
         transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);
     }
 
-    // ★★★ 新增：由 InputManager 调用 ★★★
+
     public void OnDragEnd()
     {
         // 恢复原始渲染层级
@@ -53,7 +53,7 @@ public class DraggablePiece : MonoBehaviour
         }
     }
 
-    // ★★★ 新增：提供一个公共方法给 InputManager 查询状态 ★★★
+
     public bool IsLocked()
     {
         return isLocked;

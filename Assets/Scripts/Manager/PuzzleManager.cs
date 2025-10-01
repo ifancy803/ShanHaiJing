@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PuzzleManager : MonoBehaviour
 {
-    // ========================================================================================
-    // Unity编辑器设置区域 (请在Inspector窗口中拖拽赋值)
-    // ========================================================================================
 
     [Header("1. 拼图基础设置")]
     [Tooltip("完整的拼图原图")]
@@ -34,7 +31,6 @@ public class PuzzleManager : MonoBehaviour
     [Tooltip("随机区域的尺寸 (宽和高)")]
     public Vector2 spawnAreaSize = new Vector2(5, 5);
 
-    // ========================================================================================
 
     // 运行时使用的私有列表
     private List<PuzzleSlot> puzzleSlots = new List<PuzzleSlot>();
@@ -55,15 +51,15 @@ public class PuzzleManager : MonoBehaviour
     /// </summary>
     void GeneratePuzzle()
     {
-        // 1. 清理工作: 如果场景中已有拼图, 先销毁它们, 方便反复测试
+
         foreach (Transform child in pieceAreaParent) Destroy(child.gameObject);
         foreach (Transform child in slotAreaParent) Destroy(child.gameObject);
         puzzleSlots.Clear();
 
-        // 2. 计算尺寸和起始位置
+
         int pieceWidth = sourceImage.width / cols;
         int pieceHeight = sourceImage.height / rows;
-        // 注意: Unity的世界单位基于Sprite的'Pixels Per Unit'设置, 默认为100
+
         float pieceWorldWidth = (float)pieceWidth / 100f;
         float pieceWorldHeight = (float)pieceHeight / 100f;
 
@@ -74,7 +70,7 @@ public class PuzzleManager : MonoBehaviour
 
         int pieceCounter = 0; // 计数器, 同时作为ID
 
-        // 3. 双重循环, 依次生成每个卡槽和对应的拼图块
+
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -97,9 +93,7 @@ public class PuzzleManager : MonoBehaviour
                 slot.slotId = pieceCounter;
                 puzzleSlots.Add(slot);
 
-                // --- 创建拼图块 (Piece) ---
-                // 从原图上“抠出”这一小块的像素
-                // 注意: GetPixels的Y坐标原点在左下角, 所以需要(rows - 1 - y)来翻转
+                
                 Color[] pixels = sourceImage.GetPixels(x * pieceWidth, (rows - 1 - y) * pieceHeight, pieceWidth, pieceHeight);
                 Texture2D pieceTexture = new Texture2D(pieceWidth, pieceHeight);
                 pieceTexture.SetPixels(pixels);
