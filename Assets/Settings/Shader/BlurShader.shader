@@ -4,8 +4,9 @@ Shader "Custom/BlurShader"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _BlurAmount ("Blur Amount", Range(0, 10)) = 1.0
-        _BlurRadius ("Blur Radius", Range(0, 5)) = 1.0
-        _BlurQuality ("Blur Quality", Range(1, 8)) = 4
+        _BlurRadius ("Blur Radius", Range(0, 20)) = 2.0
+        _BlurQuality ("Blur Quality", Range(1, 16)) = 6
+        _BlurIterations ("Blur Iterations", Range(1, 8)) = 2
         _BlurType ("Blur Type", Int) = 0
         _CenterX ("Center X", Range(0, 1)) = 0.5
         _CenterY ("Center Y", Range(0, 1)) = 0.5
@@ -17,8 +18,11 @@ Shader "Custom/BlurShader"
     
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 100
+        
+        Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
         
         Pass
         {
@@ -47,6 +51,7 @@ Shader "Custom/BlurShader"
             float _BlurAmount;
             float _BlurRadius;
             int _BlurQuality;
+            int _BlurIterations;
             int _BlurType;
             float _CenterX;
             float _CenterY;
@@ -63,8 +68,8 @@ Shader "Custom/BlurShader"
                 return o;
             }
             
-            // 高斯模糊采样
-            float4 GaussianBlur(sampler2D tex, float2 uv, float2 direction, float radius)
+            // 高斯模糊采样（单次）
+            float4 GaussianBlurOnce(sampler2D tex, float2 uv, float2 direction, float radius)
             {
                 float4 color = float4(0, 0, 0, 0);
                 float totalWeight = 0.0;
@@ -78,6 +83,20 @@ Shader "Custom/BlurShader"
                 }
                 
                 return color / totalWeight;
+            }
+
+            // 高斯模糊，支持多迭代（分离轴：先横向再纵向）
+            float4 GaussianBlur(sampler2D tex, float2 uv, float2 texelSize, float radius, int iterations)
+            {
+                float4 result = tex2D(tex, uv);
+                float stepRadius = max(radius / max(1, iterations), texelSize.x);
+                for (int it = 0; it < iterations; it++)
+                {
+                    float4 horizontal = GaussianBlurOnce(tex, uv, float2(1, 0) * texelSize.x, stepRadius);
+                    float4 vertical = GaussianBlurOnce(tex, uv, float2(0, 1) * texelSize.y, stepRadius);
+                    result = (horizontal + vertical) * 0.5;
+                }
+                return result;
             }
             
             // 径向模糊
@@ -133,14 +152,19 @@ Shader "Custom/BlurShader"
                 float2 uv = i.uv;
                 float4 originalColor = tex2D(_MainTex, uv);
                 
+                // 如果模糊强度为0，直接返回原始颜色
+                if (_BlurAmount <= 0.001)
+                {
+                    return originalColor;
+                }
+                
                 // 根据模糊类型选择不同的模糊算法
                 float4 blurredColor = originalColor;
                 
                 if (_BlurType == 0) // 高斯模糊
                 {
-                    float2 texelSize = _MainTex_TexelSize.xy * _BlurRadius;
-                    float4 horizontalBlur = GaussianBlur(_MainTex, uv, float2(1, 0), texelSize.x);
-                    blurredColor = GaussianBlur(_MainTex, uv, float2(0, 1), texelSize.y);
+                    float2 texelSize = _MainTex_TexelSize.xy;
+                    blurredColor = GaussianBlur(_MainTex, uv, texelSize, _BlurRadius, _BlurIterations);
                 }
                 else if (_BlurType == 1) // 径向模糊
                 {
@@ -164,6 +188,9 @@ Shader "Custom/BlurShader"
                 
                 // 应用整体强度
                 blurredColor *= _Intensity;
+                
+                // 确保Alpha通道正确
+                blurredColor.a = originalColor.a;
                 
                 return blurredColor;
             }

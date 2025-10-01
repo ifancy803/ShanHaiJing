@@ -30,6 +30,10 @@ public class BlurController : MonoBehaviour
     [SerializeField] private bool autoDetectImage = true;
     [SerializeField] private bool createMaterialInstance = true;
     
+    [Header("Debug")]
+    [SerializeField] private bool enableDebugMode = false;
+    [SerializeField] private bool showDebugInfo = true;
+    
     private float animationTime = 0f;
     private bool isAnimating = false;
     private Image targetImage;
@@ -124,7 +128,12 @@ public class BlurController : MonoBehaviour
     
     private void UpdateShaderProperties()
     {
-        if (blurMaterial == null) return;
+        if (blurMaterial == null) 
+        {
+            if (showDebugInfo)
+                Debug.LogWarning("BlurController: Blur material is null!");
+            return;
+        }
         
         // 设置模糊类型
         blurMaterial.SetInt("_BlurType", (int)blurType);
@@ -143,6 +152,12 @@ public class BlurController : MonoBehaviour
         // 设置方向模糊参数
         blurMaterial.SetFloat("_DirectionX", directionX);
         blurMaterial.SetFloat("_DirectionY", directionY);
+        
+        // 调试信息
+        if (enableDebugMode && showDebugInfo)
+        {
+            Debug.Log($"BlurController Debug - BlurAmount: {blurAmount}, BlurRadius: {blurRadius}, BlurType: {blurType}");
+        }
     }
     
     /// <summary>
@@ -360,6 +375,74 @@ public class BlurController : MonoBehaviour
         {
             originalMaterial = image.material;
             SetupBlurEffect();
+        }
+    }
+    
+    /// <summary>
+    /// 启用调试模式
+    /// </summary>
+    public void EnableDebugMode(bool enable)
+    {
+        enableDebugMode = enable;
+        if (enable && blurMaterial != null)
+        {
+            blurMaterial.SetInt("_DebugMode", 1);
+        }
+        else if (blurMaterial != null)
+        {
+            blurMaterial.SetInt("_DebugMode", 0);
+        }
+    }
+    
+    /// <summary>
+    /// 测试原始图片显示
+    /// </summary>
+    public void TestOriginalImage()
+    {
+        if (blurMaterial != null)
+        {
+            blurMaterial.SetFloat("_BlurAmount", 0f);
+            blurMaterial.SetInt("_DebugMode", 3);
+        }
+    }
+    
+    /// <summary>
+    /// 检查材质和纹理状态
+    /// </summary>
+    public void CheckMaterialStatus()
+    {
+        if (targetImage == null)
+        {
+            Debug.LogError("Target Image is null!");
+            return;
+        }
+        
+        if (blurMaterial == null)
+        {
+            Debug.LogError("Blur Material is null!");
+            return;
+        }
+        
+        if (targetImage.sprite == null)
+        {
+            Debug.LogWarning("Image sprite is null!");
+        }
+        
+        Debug.Log($"Material: {blurMaterial.name}");
+        Debug.Log($"Image Material: {targetImage.material.name}");
+        Debug.Log($"Sprite: {(targetImage.sprite != null ? targetImage.sprite.name : "null")}");
+        Debug.Log($"Blur Amount: {blurAmount}");
+        Debug.Log($"Blur Type: {blurType}");
+    }
+    
+    /// <summary>
+    /// 重置为原始状态
+    /// </summary>
+    public void ResetToOriginal()
+    {
+        if (targetImage != null && originalMaterial != null)
+        {
+            targetImage.material = originalMaterial;
         }
     }
 }
