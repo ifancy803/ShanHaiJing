@@ -37,13 +37,12 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     #region Inspector 属性
 
-    [Header("UI 元素")]
+    [Header("UI元素")]
     [SerializeField, Tooltip("列表子物体对象预制体")] private GameObject itemPrefab;
     [SerializeField, Tooltip("子物体的父物体")] private RectTransform itemParent;
     [SerializeField, Tooltip("描述文字")] private TMP_Text descriptionText;
     [SerializeField, Tooltip("名字文字")] private TMP_Text nameText;
     [SerializeField, Tooltip("描述面板")] public GameObject descriptionBar;
-    [SerializeField, Tooltip("关闭按钮")] public Button escButton;
 
     [Header("列表数据")]
     [SerializeField, Tooltip("子物体信息")] private ItemInfo[] itemInfos;
@@ -292,9 +291,9 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         itemParent.localPosition = new Vector2(itemParent.localPosition.x + eventData.delta.x * dragSpeed, itemParent.localPosition.y);
     }
 
-    public void Select(int itemIndex, int infoIndex, RectTransform itemRectTransform)
+    public void Select(int itemIndex, int infoIndex, RectTransform itemRectTransform,bool canClick)
     {
-        if (!isSelected && itemIndex == currentItemIndex)
+        if (!isSelected && itemIndex == currentItemIndex && canClick)
         {
             isSelected = true;
             isOpenDescription = true;
@@ -313,6 +312,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             foreach (var item in items)
             {
                 item.blurController.SetBlurRadius(item.infoIndex <= count ? 0 : 20);
+                item.canClick = item.infoIndex <= count;
             }
         }
     }
@@ -333,4 +333,10 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     }
 
     #endregion
+
+    public void CloseContainer(object value)
+    {
+        isSelected = false;
+        isOpenDescription = false;
+    }
 }
