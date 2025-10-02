@@ -125,21 +125,25 @@ public class BlurController : MonoBehaviour
     private void UpdateShaderProperties()
     {
         if (blurMaterial == null) return;
-        
+
+        // 确保在合理的范围内
+        blurAmount = Mathf.Clamp(blurAmount, 0f, 10f);
+        blurRadius = Mathf.Clamp(blurRadius, 0f, 5f);
+
         // 设置模糊类型
         blurMaterial.SetInt("_BlurType", (int)blurType);
-        
+
         // 设置基本参数
         blurMaterial.SetFloat("_BlurAmount", blurAmount);
         blurMaterial.SetFloat("_BlurRadius", blurRadius);
         blurMaterial.SetInt("_BlurQuality", blurQuality);
         blurMaterial.SetFloat("_Intensity", intensity);
-        
+
         // 设置径向模糊参数
         blurMaterial.SetFloat("_CenterX", centerX);
         blurMaterial.SetFloat("_CenterY", centerY);
         blurMaterial.SetFloat("_RadialStrength", radialStrength);
-        
+
         // 设置方向模糊参数
         blurMaterial.SetFloat("_DirectionX", directionX);
         blurMaterial.SetFloat("_DirectionY", directionY);

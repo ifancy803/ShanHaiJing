@@ -9,7 +9,7 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     [SerializeField,Tooltip("图片")] 
     private Image image;
     [SerializeField,Tooltip("名称文字")] 
-    private TMP_Text nameText;
+    public TMP_Text nameText;
     [SerializeField,Tooltip("画布组")] 
     private CanvasGroup canvasGroup;
 
@@ -21,6 +21,8 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     [HideInInspector] public RectTransform rectTransform;
 
     private bool isDrag;
+    
+    public BlurController blurController;
 
     private void Awake()
     {
