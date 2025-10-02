@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 25678638}
   - component: {fileID: 25678637}
   - component: {fileID: 25678636}
+  - component: {fileID: 25678640}
   m_Layer: 0
   m_Name: DescriptionBar
   m_TagString: Untagged
@@ -245,6 +246,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25678634}
   m_CullTransparentMesh: 1
+--- !u!114 &25678640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25678634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a100b6bb1981130428c83cabf84a1304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseEventSO: {fileID: 11400000, guid: 1cc3507f22c331c4f84f6038d0387fd7, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 25678636}
+        m_TargetAssemblyTypeName: DescriptionBarController, Assembly-CSharp
+        m_MethodName: CloseImageListPanel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &67063944
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,6 +534,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageListPanel: {fileID: 1501334439}
+  closeImageListPanelEvent: {fileID: 11400000, guid: 1cc3507f22c331c4f84f6038d0387fd7, type: 2}
 --- !u!1 &297992788
 GameObject:
   m_ObjectHideFlags: 0

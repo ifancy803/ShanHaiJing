@@ -5,11 +5,17 @@ public class UIManager : Singleton<UIManager>
 {
     public GameObject imageListPanel;
 
+    [Header("广播")] public ObjectEventSO closeImageListPanelEvent;
+    
     [ContextMenu("打开角色选择面板")]
     public void OpenImageListPanel() { ToggleScale(imageListPanel,Ease.OutElastic,true,1); }
-    
+
     [ContextMenu("关闭角色选择面板")]
-    public void CloseImageListPanel() { ToggleScale(imageListPanel,Ease.InElastic,false,1); }
+    public void CloseImageListPanel()
+    {
+        closeImageListPanelEvent.RaiseEvent(null,this);
+        ToggleScale(imageListPanel,Ease.InElastic,false,1); 
+    }
     
     /// <summary>
     /// 放大 Panel
