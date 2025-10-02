@@ -21,6 +21,7 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     [HideInInspector] public RectTransform rectTransform;
 
     private bool isDrag;
+    public bool canClick = false;
     
     public BlurController blurController;
 
@@ -68,7 +69,7 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     public void OnPointerUp(PointerEventData eventData)
     {
         if(!isDrag)
-            selectHorizontalScroll.Select(itemIndex, infoIndex,rectTransform);
+            selectHorizontalScroll.Select(itemIndex, infoIndex,rectTransform,canClick);
         selectHorizontalScroll.OnPointerUp(eventData);
     }
     
