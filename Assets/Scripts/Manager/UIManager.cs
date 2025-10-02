@@ -4,6 +4,7 @@ using UnityEngine;
 public class UIManager : Singleton<UIManager>
 {
     public GameObject imageListPanel;
+    [HideInInspector]public int picIndex = -1;
 
     [Header("广播")] public ObjectEventSO closeImageListPanelEvent;
     
@@ -52,5 +53,10 @@ public class UIManager : Singleton<UIManager>
             ScaleUp(obj,et,duration);
         else
             ScaleDown(obj,et,duration);
+    }
+
+    public void SetPicIndex(int index)
+    {
+        picIndex = index;
     }
 }

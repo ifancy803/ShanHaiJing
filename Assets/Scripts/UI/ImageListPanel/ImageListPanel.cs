@@ -117,7 +117,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }
         
         // TODO: count 按照场景顺序解锁
-        UnLockItemsBlur(2);
+        UnLockItemsBlur(UIManager.Instance.picIndex);
         
         ItemControl();
     }
@@ -310,6 +310,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             isSelected = true;
             isOpenDescription = true;
             UIManager.Instance.ToggleScale(descriptionBar,Ease.InOutQuart,true,0.5f);
+            SetCenterItem(infoIndex);
         }
         else
         {
@@ -320,7 +321,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void UnLockItemsBlur(int count)
     {
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i <= count; i++)
         {
             foreach (var item in items)
             {
