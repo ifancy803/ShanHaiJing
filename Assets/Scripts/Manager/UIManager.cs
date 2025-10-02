@@ -58,6 +58,5 @@ public class UIManager : Singleton<UIManager>
     public void SetPicIndex(int index)
     {
         picIndex = index;
-        Debug.Log(picIndex);
     }
 }
