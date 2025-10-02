@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -105,8 +106,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     private void Update()
     {
-        descriptionBar.SetActive(isOpenDescription);
-
         if (!isDrag) Adsorption();
 
         // 修复 offsetTimes 计算
@@ -282,11 +281,24 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     #region 用户交互
 
-    public void OnPointerUp(PointerEventData eventData) => isDrag = false;
-    public void OnPointerDown(PointerEventData eventData) => isDrag = true;
-    public void OnDrag(PointerEventData eventData)
-   
+    public void OnPointerUp(PointerEventData eventData)
     {
+        if(isOpenDescription)
+            return;
+        isDrag = false;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if(isOpenDescription)
+            return;
+        isDrag = true;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if(isOpenDescription)
+            return;
         isSelectMove = false;
         itemParent.localPosition = new Vector2(itemParent.localPosition.x + eventData.delta.x * dragSpeed, itemParent.localPosition.y);
     }
@@ -297,6 +309,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         {
             isSelected = true;
             isOpenDescription = true;
+            UIManager.Instance.ToggleScale(descriptionBar,Ease.InOutQuart,true,0.5f);
         }
         else
         {
@@ -337,6 +350,12 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     public void CloseContainer(object value)
     {
         isSelected = false;
+        descriptionBar.transform.localScale = Vector3.one;
+        descriptionBar.transform.DOKill();
+        descriptionBar.transform.DOScale(Vector3.zero,0.5f).SetEase(Ease.InOutQuart).OnComplete(() =>
+        {
+            descriptionBar.SetActive(false);
+        });
         isOpenDescription = false;
     }
 }

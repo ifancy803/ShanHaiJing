@@ -23,6 +23,11 @@ public class DescriptionBarController : MonoBehaviour
         EscBtn.onClick.AddListener(EscBtnClicked);
     }
 
+    private void OnEnable()
+    {
+        characterDisplayBtnClicked();
+    }
+
     private void characterDisplayBtnClicked()
     {
         characterImage.SetActive(true);
@@ -39,7 +44,6 @@ public class DescriptionBarController : MonoBehaviour
 
     private void EscBtnClicked()
     {
-        characterDisplayBtnClicked();
-        closeContainer.RaiseEvent(this,this);
+        closeContainer.RaiseEvent(null,this);
     }
 }

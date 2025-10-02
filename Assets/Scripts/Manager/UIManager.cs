@@ -1,29 +1,20 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {
     public GameObject imageListPanel;
-    
-    [Header("缩放设置")]
-    public float duration =1f;             // 动画时间
 
     [ContextMenu("打开角色选择面板")]
-    public void OpenImageListPanel()
-    {
-        ToggleScale(imageListPanel,Ease.OutElastic,true);
-    }
+    public void OpenImageListPanel() { ToggleScale(imageListPanel,Ease.OutElastic,true,1); }
     
     [ContextMenu("关闭角色选择面板")]
-    public void CloseImageListPanel()
-    {
-        ToggleScale(imageListPanel,Ease.OutQuart,false);
-    }
+    public void CloseImageListPanel() { ToggleScale(imageListPanel,Ease.InElastic,false,1); }
     
     /// <summary>
     /// 放大 Panel
     /// </summary>
-    private void ScaleUp(GameObject obj,Ease et)
+    private void ScaleUp(GameObject obj,Ease et,float duration)
     {
         if(obj == null) return;
         obj.SetActive(true);
@@ -37,7 +28,7 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// 缩回原始大小
     /// </summary>
-    private void ScaleDown(GameObject obj,Ease et)
+    private void ScaleDown(GameObject obj,Ease et,float duration)
     {
         if (obj == null) return;
         imageListPanel.SetActive(true);
@@ -49,12 +40,11 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// 可直接切换缩放
     /// </summary>
-    public void ToggleScale(GameObject obj,Ease et,bool scaleUp)
+    public void ToggleScale(GameObject obj,Ease et,bool scaleUp,float duration)
     {
         if(scaleUp)
-            ScaleUp(obj,et);
+            ScaleUp(obj,et,duration);
         else
-            ScaleDown(obj,et);
+            ScaleDown(obj,et,duration);
     }
-    
 }
