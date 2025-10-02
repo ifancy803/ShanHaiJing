@@ -82,7 +82,7 @@ public class DraggablePiece : MonoBehaviour
             {
                 isLocked = false;
                 Debug.Log($"拼图块 {pieceId} 已被移出卡槽，解除锁定。");
-                // 此时也可以选择再次通知 PuzzleManager，但通常只在成功放置时检查即可
+                gameObject.GetComponent<BoxCollider2D>().enabled = false;
             }
         }
     }

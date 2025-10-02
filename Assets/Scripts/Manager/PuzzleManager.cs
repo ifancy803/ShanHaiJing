@@ -202,7 +202,7 @@ public class PuzzleManager : MonoBehaviour
         // 如果所有拼图块都已锁定，则拼图完成
         Debug.Log("恭喜! 拼图已全部完成!");
         imgIndex++;
-
-        afterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
+        var imgid = imgIndex - 1;
+        afterPuzzleCompletionEvent.RaiseEvent(imgid, this);
     }
 }
