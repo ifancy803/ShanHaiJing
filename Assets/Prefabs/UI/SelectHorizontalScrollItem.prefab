@@ -118,7 +118,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 27}
-  m_SizeDelta: {x: 243.7129, y: 243.7104}
+  m_SizeDelta: {x: 403.0611, y: 403.0569}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8721825594020746293
 CanvasRenderer:
@@ -319,7 +319,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -137}
+  m_AnchoredPosition: {x: 0, y: -231}
   m_SizeDelta: {x: 100, y: 37.793}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7191991072502665618
@@ -353,7 +353,7 @@ MonoBehaviour:
   m_text: "\u540D\u79F0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
-  m_sharedMaterial: {fileID: -5454356494949079618, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+  m_sharedMaterial: {fileID: 6257584385345030784, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
