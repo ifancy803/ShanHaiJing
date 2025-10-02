@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 // using UnityEngine.Events; // 如果你不需要DraggablePiece自己也触发事件，可以不引入
 
 [RequireComponent(typeof(SpriteRenderer), typeof(BoxCollider2D))]
@@ -38,6 +40,7 @@ public class DraggablePiece : MonoBehaviour
 
     public void OnDragStart()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
         // 提高渲染层级, 使其在拖拽时显示在最上层
         spriteRenderer.sortingOrder = sortingOrderWhileDragging;
     }
@@ -45,6 +48,7 @@ public class DraggablePiece : MonoBehaviour
 
     public void OnDragging(Vector3 newPosition)
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
         transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);
     }
 

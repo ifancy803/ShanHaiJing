@@ -285,6 +285,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         if(isOpenDescription)
             return;
+        EventSystem.current.SetSelectedGameObject(null);
         isDrag = false;
     }
 
@@ -292,6 +293,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         if(isOpenDescription)
             return;
+        EventSystem.current.SetSelectedGameObject(gameObject);
         isDrag = true;
     }
 
@@ -299,6 +301,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         if(isOpenDescription)
             return;
+        EventSystem.current.SetSelectedGameObject(gameObject);
         isSelectMove = false;
         itemParent.localPosition = new Vector2(itemParent.localPosition.x + eventData.delta.x * dragSpeed, itemParent.localPosition.y);
     }
