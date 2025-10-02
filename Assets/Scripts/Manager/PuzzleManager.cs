@@ -38,6 +38,9 @@ public class PuzzleManager : MonoBehaviour
     public Transform spawnAreaCenter;
     [Tooltip("随机区域的尺寸 (宽和高)")]
     public Vector2 spawnAreaSize = new Vector2(5, 5);
+
+    [Header("广播")] 
+    public IntEventSO AfterPuzzleCompletionEvent;
     
 
     // 运行时使用的私有列表
@@ -199,5 +202,7 @@ public class PuzzleManager : MonoBehaviour
         // 如果所有拼图块都已锁定，则拼图完成
         Debug.Log("恭喜! 拼图已全部完成!");
         imgIndex++;
+
+        AfterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
     }
 }
