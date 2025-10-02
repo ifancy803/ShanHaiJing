@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 25678638}
   - component: {fileID: 25678637}
   - component: {fileID: 25678636}
-  - component: {fileID: 25678640}
   m_Layer: 0
   m_Name: DescriptionBar
   m_TagString: Untagged
@@ -175,7 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c9336920f1fd1c4e9a0b28adc0b4600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeContainer: {fileID: 11400000, guid: 7d2705bfed531c342ad45260318ad95c, type: 2}
+  closeContainerEvent: {fileID: 11400000, guid: 7d2705bfed531c342ad45260318ad95c, type: 2}
   characterImage: {fileID: 1992013773}
   descriptionText: {fileID: 962604821}
   characterContext: {fileID: 853448091}
@@ -246,34 +245,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25678634}
   m_CullTransparentMesh: 1
---- !u!114 &25678640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 25678634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a100b6bb1981130428c83cabf84a1304, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseEventSO: {fileID: 11400000, guid: 9a7a2605e75441346ac21bb04730727f, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 25678636}
-        m_TargetAssemblyTypeName: DescriptionBarController, Assembly-CSharp
-        m_MethodName: AfterContainerClosed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &67063944
 GameObject:
   m_ObjectHideFlags: 0

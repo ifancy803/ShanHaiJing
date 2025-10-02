@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class DescriptionBarController : MonoBehaviour
 { 
     [Header("广播")]
-    public ObjectEventSO closeContainer;
+    public ObjectEventSO closeContainerEvent;
     
     [Header("UI Elements")]
     public GameObject characterImage;
@@ -44,6 +44,6 @@ public class DescriptionBarController : MonoBehaviour
 
     private void EscBtnClicked()
     {
-        closeContainer.RaiseEvent(null,this);
+        closeContainerEvent.RaiseEvent(null,this);
     }
 }
