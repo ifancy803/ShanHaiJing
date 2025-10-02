@@ -18,7 +18,7 @@ public class BaseEventSO<T> : ScriptableObject
     /// <param name="sender">事件发出者</param>
     public void RaiseEvent(T value, object sender)
     {
-        OnEventRaised.Invoke(value);
+        OnEventRaised?.Invoke(value);
         lastSender = sender.ToString();
     }
 }

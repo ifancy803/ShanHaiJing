@@ -40,7 +40,7 @@ public class PuzzleManager : MonoBehaviour
     public Vector2 spawnAreaSize = new Vector2(5, 5);
 
     [Header("广播")] 
-    public IntEventSO AfterPuzzleCompletionEvent;
+    public IntEventSO afterPuzzleCompletionEvent;
     
 
     // 运行时使用的私有列表
@@ -203,6 +203,6 @@ public class PuzzleManager : MonoBehaviour
         Debug.Log("恭喜! 拼图已全部完成!");
         imgIndex++;
 
-        AfterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
+        afterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
     }
 }
