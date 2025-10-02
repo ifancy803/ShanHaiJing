@@ -46,4 +46,9 @@ public class DescriptionBarController : MonoBehaviour
     {
         closeContainerEvent.RaiseEvent(null,this);
     }
+    
+    public void CloseImageListPanel(object value)
+    {
+        closeContainerEvent.RaiseEvent(null,this);
+    }
 }
