@@ -80,6 +80,7 @@ MonoBehaviour:
   infoIndex: 0
   description: 
   rectTransform: {fileID: 0}
+  canClick: 0
   blurController: {fileID: 3199360572828724283}
 --- !u!1 &5896798611431620288
 GameObject:
@@ -172,8 +173,8 @@ MonoBehaviour:
   blurMaterial: {fileID: 2100000, guid: d130842468affd443a354a7cf858a294, type: 2}
   blurType: 0
   blurAmount: 1
-  blurRadius: 20
-  blurQuality: 31
+  blurRadius: 5
+  blurQuality: 8
   intensity: 1
   centerX: 0.5
   centerY: 0.5
@@ -352,7 +353,7 @@ MonoBehaviour:
   m_text: "\u540D\u79F0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
-  m_sharedMaterial: {fileID: -6187404325514634381, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+  m_sharedMaterial: {fileID: 1781255272230136471, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
