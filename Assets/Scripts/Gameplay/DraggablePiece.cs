@@ -1,65 +1,61 @@
-using DG.Tweening.Plugins;
+// DraggablePiece.cs
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer), typeof(BoxCollider2D))]
 public class DraggablePiece : MonoBehaviour
 {
-    public Vector3 correctPosition;
-    
-    private bool isLocked = false;
-    
-    private Vector3 offset;
-    
-    private int originalSortingOrder;
-    private SpriteRenderer spriteRenderer;
+    public int pieceId;
+    public Transform targetSlotTransform;
 
-    void Awake()
+    [Tooltip("当拖拽时, 拼图块的渲染层级, 确保它在最顶层")]
+    public int sortingOrderWhileDragging = 10;
+    [Tooltip("拼图块与卡槽中心点的距离小于这个值时, 会自动吸附")]
+    public float snapThreshold = 0.7f;
+
+    private bool isLocked = false;
+    private SpriteRenderer spriteRenderer;
+    private int originalSortingOrder;
+
+    void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalSortingOrder = spriteRenderer.sortingOrder;
     }
 
-    void OnMouseDown()
+
+    public void OnDragStart()
     {
-        if (!isLocked)
+        // 提高渲染层级, 使其在拖拽时显示在最上层
+        spriteRenderer.sortingOrder = sortingOrderWhileDragging;
+    }
+
+
+    public void OnDragging(Vector3 newPosition)
+    {
+        transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);
+    }
+
+
+    public void OnDragEnd()
+    {
+        // 恢复原始渲染层级
+        spriteRenderer.sortingOrder = originalSortingOrder;
+
+        // 检查与目标卡槽的距离
+        float distance = Vector2.Distance(transform.position, targetSlotTransform.position);
+
+        if (distance <= snapThreshold)
         {
-            offset = transform.position - GetMouseWorldPos();
-            
-            spriteRenderer.sortingOrder = originalSortingOrder + 10;
+            // 距离足够近, 自动吸附到卡槽位置
+            transform.position = targetSlotTransform.position;
+            isLocked = true;
+            Debug.Log($"拼图块 {pieceId} 已正确放置!");
         }
     }
 
-    void OnMouseDrag()
-    {
-        if (!isLocked)
-        {
-            transform.position = GetMouseWorldPos() + offset;
-        }
-    }
 
-    void OnMouseUp()
+    public bool IsLocked()
     {
-        if (!isLocked)
-        {
-            spriteRenderer.sortingOrder = originalSortingOrder;
-            
-            float snapDistance = 0.5f; 
-            if (Vector3.Distance(transform.position, correctPosition) < snapDistance)
-            {
-
-                transform.position = correctPosition;
-                isLocked = true;
-                
-                // TODO:可以通知PuzzleManager，是否归位
-                // FindObjectOfType<PuzzleManager>().PiecePlaced();
-            }
-        }
-    }
-
-    // 获取鼠标在世界坐标系中的位置
-    private Vector3 GetMouseWorldPos()
-    {
-        Vector3 mousePoint = Input.mousePosition;
-        mousePoint.z = Camera.main.nearClipPlane + 10; // z坐标需要设置，否则可能看不见
-        return Camera.main.ScreenToWorldPoint(mousePoint);
+        return isLocked;
     }
 }
