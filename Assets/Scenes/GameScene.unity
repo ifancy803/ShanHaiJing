@@ -144,7 +144,7 @@ Transform:
   m_GameObject: {fileID: 165811310}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: -0.12, z: -10.013597}
+  m_LocalPosition: {x: -4.5, y: 0, z: -10.013597}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -317,14 +317,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sourceImageNums:
   - {fileID: 2800000, guid: c857120a078d7dd48b0d984f8201bf54, type: 3}
-  rows: 4
-  cols: 3
+  rows: 5
+  cols: 5
+  PPUvalue: 20
   piecePrefab: {fileID: 4598890856990747899, guid: 5260a811b68301a4389ee40441492e25, type: 3}
   slotPrefab: {fileID: 7961442579909042726, guid: 1e1ac1bbdc1dd594783a9d8a30346177, type: 3}
   pieceAreaParent: {fileID: 165811311}
   slotAreaParent: {fileID: 1099054320}
   spawnAreaCenter: {fileID: 1277586819}
-  spawnAreaSize: {x: 1.5, y: 1.5}
+  spawnAreaSize: {x: 8, y: 8}
   afterPuzzleCompletionEvent: {fileID: 11400000, guid: 65a1591195229924aa26f73cb911b6e3, type: 2}
 --- !u!4 &540907772
 Transform:
@@ -410,7 +411,7 @@ Transform:
   m_GameObject: {fileID: 1099054319}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.99, y: 0, z: 0}
+  m_LocalPosition: {x: -5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
