@@ -1,13 +1,14 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
 public class UIManager : Singleton<UIManager>
 {
     public GameObject imageListPanel;
-    [HideInInspector]public int picIndex = -1;
+    public ArrayList picIndexList = new ArrayList();
 
     [Header("广播")] public ObjectEventSO closeImageListPanelEvent;
-    
+
     [ContextMenu("打开角色选择面板")]
     public void OpenImageListPanel() { ToggleScale(imageListPanel,Ease.OutElastic,true,1); }
 
@@ -57,6 +58,14 @@ public class UIManager : Singleton<UIManager>
 
     public void SetPicIndex(int index)
     {
-        picIndex = index;
+        if(index<0)
+            return;
+        picIndexList.Add(index);
+    }
+    
+    [ContextMenu("测试3")]
+    public void AddPicIndex()
+    {
+        picIndexList.Add(3);
     }
 }
