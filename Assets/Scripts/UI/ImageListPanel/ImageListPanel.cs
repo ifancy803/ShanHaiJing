@@ -285,7 +285,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         if(isOpenDescription)
             return;
-        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(gameObject);
         isDrag = false;
     }
 
