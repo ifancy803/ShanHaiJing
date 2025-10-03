@@ -76,9 +76,10 @@ MonoBehaviour:
   image: {fileID: 643115072696686739}
   nameText: {fileID: 8027728819741600768}
   canvasGroup: {fileID: 6119957023247921084}
-  itemIndex: 0
-  infoIndex: 0
+  itemIndex: -1
+  infoIndex: -1
   description: 
+  displayDescription: 
   rectTransform: {fileID: 0}
   canClick: 0
   blurController: {fileID: 3199360572828724283}

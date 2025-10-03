@@ -83,7 +83,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float[] distances;
     private float selectItemX;
     private bool isSelectMove;
-    private bool isSelected;
+
     private bool isOpenDescription = false;
 
     // 屏幕适配相关变量
@@ -102,22 +102,13 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         currentScreenSize = originalScreenSize;
     }
 
-    private void Start()
-    {
-        Init();
-    }
-
     private void OnEnable()
     {
+        if (items == null || items.Length == 0) Init();
         CalculateScreenScale();
-
-        if (UIManager.Instance.picIndex >= 0)
-        {
-            UnLockItemsBlur(UIManager.Instance.picIndex);
-            SetCenterItem(UIManager.Instance.picIndex);
-        }
-        
         RefreshUI();
+        if(UIManager.Instance.picIndexList.Count > 0)
+            SetCenterItem((int)UIManager.Instance.picIndexList[^1]);
     }
 
     private void Update()
@@ -199,7 +190,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void RefreshUI()
     {
-        if (items == null || items.Length == 0) Init();
+        //if (items == null || items.Length == 0) Init();
 
         MoveItems(offsetTimes);
         ItemControl();
@@ -226,7 +217,14 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         for (int i = Mathf.FloorToInt(displayNumber / 2f); i < displayNumber; i++)
         {
             if (infoIndex >= itemInfos.Length) infoIndex = 0;
-            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description, itemInfos[infoIndex].displayDescription,infoIndex, this);
+            items[i].SetInfo(
+                itemInfos[infoIndex].sprite, 
+                itemInfos[infoIndex].name, 
+                itemInfos[infoIndex].description, 
+                itemInfos[infoIndex].displayDescription,
+                infoIndex,  // 确保这里传递正确的索引
+                this
+            );
             infoIndex++;
         }
 
@@ -235,9 +233,17 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         for (int i = Mathf.FloorToInt(displayNumber / 2f) - 1; i >= 0; i--)
         {
             if (infoIndex < 0) infoIndex = itemInfos.Length - 1;
-            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description,itemInfos[infoIndex].displayDescription, infoIndex, this);
+            items[i].SetInfo(
+                itemInfos[infoIndex].sprite, 
+                itemInfos[infoIndex].name, 
+                itemInfos[infoIndex].description,
+                itemInfos[infoIndex].displayDescription,
+                infoIndex,  // 确保这里传递正确的索引
+                this
+            );
             infoIndex--;
         }
+        UpdateItemsUnlockState();
     }
 
     private void ItemControl()
@@ -269,7 +275,9 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         descriptionText.text = items[minIndex].description;
         displayDescriptionText.text = items[minIndex].displayDescription;
         nameText.text = items[minIndex].nameText.text + "信息";
-        currentItemIndex = items[minIndex].itemIndex;
+    
+        // 修复：使用 items[minIndex].infoIndex 而不是 items[minIndex].itemIndex
+        currentItemIndex = items[minIndex].infoIndex; // 这里应该是 infoIndex，不是 itemIndex
     }
 
     private void Adsorption()
@@ -326,32 +334,62 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         itemParent.localPosition = new Vector2(itemParent.localPosition.x + eventData.delta.x * dragSpeed, itemParent.localPosition.y);
     }
 
-    public void Select(int itemIndex, int infoIndex, RectTransform itemRectTransform,bool canClick)
+    public void Select(int itemIndex, int infoIndex, RectTransform itemRectTransform, bool canClick)
     {
-        if (!isSelected && itemIndex == currentItemIndex && canClick)
-        {
-            isSelected = true;
-            isOpenDescription = true;
-            UIManager.Instance.ToggleScale(descriptionBar,Ease.InOutQuart,true,0.5f);
-        }else if (!isSelected && itemIndex == currentItemIndex && !canClick)
-        {
-            sendIndexToPuzzle.RaiseEvent(infoIndex,this);
-            Debug.Log(infoIndex);
-            //TODO:溶解ui,关闭panel
-        }
-        else
+        // 只处理当前中心项
+        if (infoIndex != currentItemIndex)
         {
             isSelectMove = true;
             selectItemX = itemRectTransform.localPosition.x;
+            return;
+        }
+    
+        // 是中心项，检查是否可以点击
+        if (canClick)
+        {
+            isOpenDescription = true;
+            UIManager.Instance.ToggleScale(descriptionBar, Ease.InOutQuart, true, 0.5f);
+        }
+        else
+        {
+            UnLockItemsBlur(UIManager.Instance.picIndexList);
+            sendIndexToPuzzle.RaiseEvent(infoIndex, this);
         }
     }
 
-    private void UnLockItemsBlur(int count)
+    private void UnLockItemsBlur(ArrayList countList)
     {
-        foreach (var item in items.Where(item => item.infoIndex == count))
+        UpdateItemsUnlockState();
+    }
+    
+    private void UpdateItemsUnlockState()
+    {
+        if (UIManager.Instance.picIndexList == null || UIManager.Instance.picIndexList.Count == 0)
+            return;
+
+        foreach (var item in items)
         {
-            item.blurController.SetBlurRadius(0);
-            item.canClick = true;
+            // 检查当前item的infoIndex是否在解锁列表中
+            bool unlocked = false;
+            foreach (int unlockedIndex in UIManager.Instance.picIndexList)
+            {
+                if (item.infoIndex == unlockedIndex)
+                {
+                    unlocked = true;
+                    break;
+                }
+            }
+
+            if (unlocked)
+            {
+                item.blurController.SetBlurRadius(0);
+                item.canClick = true;
+            }
+            else
+            {
+                item.blurController.SetBlurRadius(20);
+                item.canClick = false;
+            }
         }
     }
 
@@ -361,7 +399,8 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
         if (targetItem == null)
         {
-            Debug.LogWarning($"未找到 infoIndex = {targetIndex} 的 item");
+            if(targetIndex >= 0)
+                Debug.LogWarning($"未找到 infoIndex = {targetIndex} 的 item");
             return;
         }
 
@@ -374,7 +413,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void CloseContainer(object value)
     {
-        isSelected = false;
         descriptionBar.transform.localScale = Vector3.one;
         descriptionBar.transform.DOKill();
         descriptionBar.transform.DOScale(Vector3.zero,0.5f).SetEase(Ease.InOutQuart).OnComplete(() =>
@@ -382,14 +420,5 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             descriptionBar.SetActive(false);
         });
         isOpenDescription = false;
-    }
-
-    [ContextMenu("解锁全部图片")]
-    public void UnlockPic()
-    {
-        for (int i = 1; i < items.Length+1; i++)
-        {
-            UnLockItemsBlur(i);
-        }
     }
 }
