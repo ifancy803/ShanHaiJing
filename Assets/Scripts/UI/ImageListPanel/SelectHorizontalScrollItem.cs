@@ -16,6 +16,7 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     [Tooltip("选项索引")] public int itemIndex;
     [Tooltip("信息索引")] public int infoIndex;
     [Tooltip("描述文本")] public string description;
+    [Tooltip("简介文字")] public string displayDescription;
 
     private ImageListPanel selectHorizontalScroll;
     [HideInInspector] public RectTransform rectTransform;
@@ -38,13 +39,14 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     /// <param name="description">图片描述</param>
     /// <param name="infoIndex">信息索引</param>
     /// <param name="selectHorizontalScroll">水平滚动选择列表脚本</param>
-    public void SetInfo(Sprite sprite, string name, string description, int infoIndex, ImageListPanel selectHorizontalScroll)
+    public void SetInfo(Sprite sprite, string name, string description,string displayDescription, int infoIndex, ImageListPanel selectHorizontalScroll)
     {
         image.sprite = sprite;
         nameText.text = name;
         this.description = description;
         this.infoIndex = infoIndex;
         this.selectHorizontalScroll = selectHorizontalScroll;
+        this.displayDescription =  displayDescription;
     }
 
     /// <summary>
