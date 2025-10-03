@@ -5,7 +5,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
@@ -51,6 +51,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     [SerializeField, Tooltip("简介文字")] private TMP_Text displayDescriptionText;
     [SerializeField, Tooltip("名字文字")] private TMP_Text nameText;
     [SerializeField, Tooltip("描述面板")] public GameObject descriptionBar;
+    [SerializeField, Tooltip("角色精灵")] public Image characterImage;
 
     [Header("列表数据")]
     [SerializeField, Tooltip("子物体信息")] private ItemInfo[] itemInfos;
@@ -90,6 +91,9 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float screenScale = 1f;
     private Vector2 originalScreenSize;
     private Vector2 currentScreenSize;
+    
+    public UIImageDissolveController dissolveController;
+    
 
     #endregion
 
@@ -100,6 +104,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         displayNumber = itemInfos.Length;
         originalScreenSize = new Vector2(Screen.width, Screen.height);
         currentScreenSize = originalScreenSize;
+        dissolveController = GetComponent<UIImageDissolveController>();
     }
 
     private void OnEnable()
@@ -109,6 +114,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         RefreshUI();
         if(UIManager.Instance.picIndexList.Count > 0)
             SetCenterItem((int)UIManager.Instance.picIndexList[^1]);
+        dissolveController.ResetDissolve();
     }
 
     private void Update()
@@ -274,6 +280,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
         descriptionText.text = items[minIndex].description;
         displayDescriptionText.text = items[minIndex].displayDescription;
+        characterImage.sprite = items[minIndex].image.sprite;
         nameText.text = items[minIndex].nameText.text + "信息";
     
         // 修复：使用 items[minIndex].infoIndex 而不是 items[minIndex].itemIndex
@@ -354,7 +361,21 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         {
             UnLockItemsBlur(UIManager.Instance.picIndexList);
             sendIndexToPuzzle.RaiseEvent(infoIndex, this);
+            //TODO:关闭panel的溶解shader
+            StartCoroutine(StartDissolve());
         }
+    }
+    
+    IEnumerator StartDissolve()
+    {
+        
+        // 溶解完成后执行特定方法
+        dissolveController.StartDissolve(2f, () => 
+        {
+            UIManager.Instance.CloseImageListPanel();
+        });
+        
+        yield break;
     }
 
     private void UnLockItemsBlur(ArrayList countList)
@@ -382,12 +403,12 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
             if (unlocked)
             {
-                item.blurController.SetBlurRadius(0);
+                item.blurController.SetMosaicSize(1);
                 item.canClick = true;
             }
             else
             {
-                item.blurController.SetBlurRadius(20);
+                item.blurController.SetMosaicSize(80);
                 item.canClick = false;
             }
         }
