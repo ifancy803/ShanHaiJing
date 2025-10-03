@@ -479,7 +479,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageListPanel: {fileID: 823730930}
-  picIndex: -1
   closeImageListPanelEvent: {fileID: 11400000, guid: 1cc3507f22c331c4f84f6038d0387fd7, type: 2}
 --- !u!114 &261559768
 MonoBehaviour:

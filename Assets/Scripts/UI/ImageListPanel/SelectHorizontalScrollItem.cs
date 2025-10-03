@@ -13,8 +13,8 @@ public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IP
     [SerializeField,Tooltip("画布组")] 
     private CanvasGroup canvasGroup;
 
-    [Tooltip("选项索引")] public int itemIndex;
-    [Tooltip("信息索引")] public int infoIndex;
+    [Tooltip("选项索引")] public int itemIndex = -1;
+    [Tooltip("信息索引")] public int infoIndex = -1;
     [Tooltip("描述文本")] public string description;
     [Tooltip("简介文字")] public string displayDescription;
 
