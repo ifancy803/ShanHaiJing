@@ -16,13 +16,19 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         public string name;
         public Sprite sprite;
+        
+        [Header("图片描述")]
         [TextArea] public string description;
-
-        public ItemInfo(Sprite sprite, string description, string name)
+        
+        [Header("图片介绍")]
+        [TextArea] public string displayDescription;
+        
+        public ItemInfo(Sprite sprite, string description, string name, string displayDescription)
         {
             this.sprite = sprite;
             this.description = description;
             this.name = name;
+            this.displayDescription = displayDescription;
         }
     }
 
@@ -42,6 +48,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     [SerializeField, Tooltip("列表子物体对象预制体")] private GameObject itemPrefab;
     [SerializeField, Tooltip("子物体的父物体")] private RectTransform itemParent;
     [SerializeField, Tooltip("描述文字")] private TMP_Text descriptionText;
+    [SerializeField, Tooltip("简介文字")] private TMP_Text displayDescriptionText;
     [SerializeField, Tooltip("名字文字")] private TMP_Text nameText;
     [SerializeField, Tooltip("描述面板")] public GameObject descriptionBar;
 
@@ -61,6 +68,8 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     [SerializeField, Tooltip("屏幕适配模式")] private ScreenAdaptationMode adaptationMode = ScreenAdaptationMode.FitWidth;
     [SerializeField, Tooltip("最小缩放比例")] private float minScale = 0.5f;
     [SerializeField, Tooltip("最大缩放比例")] private float maxScale = 2.0f;
+
+    [Header("广播")] public IntEventSO sendIndexToPuzzle;
 
     #endregion
 
@@ -101,6 +110,13 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private void OnEnable()
     {
         CalculateScreenScale();
+
+        if (UIManager.Instance.picIndex >= 0)
+        {
+            UnLockItemsBlur(UIManager.Instance.picIndex);
+            SetCenterItem(UIManager.Instance.picIndex);
+        }
+        
         RefreshUI();
     }
 
@@ -115,9 +131,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             offsetTimes = currentOffsetTimes;
             MoveItems(offsetTimes);
         }
-        
-        // TODO: count 按照场景顺序解锁
-        UnLockItemsBlur(UIManager.Instance.picIndex);
         
         ItemControl();
     }
@@ -138,6 +151,12 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             var item = Instantiate(itemPrefab, itemParent).GetComponent<SelectHorizontalScrollItem>();
             item.itemIndex = i;
             items[i] = item;
+        }
+        
+        foreach (var item in items)
+        {
+            item.blurController.SetBlurRadius(20);
+            item.canClick = false;
         }
     }
 
@@ -207,7 +226,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         for (int i = Mathf.FloorToInt(displayNumber / 2f); i < displayNumber; i++)
         {
             if (infoIndex >= itemInfos.Length) infoIndex = 0;
-            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description, infoIndex, this);
+            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description, itemInfos[infoIndex].displayDescription,infoIndex, this);
             infoIndex++;
         }
 
@@ -216,7 +235,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         for (int i = Mathf.FloorToInt(displayNumber / 2f) - 1; i >= 0; i--)
         {
             if (infoIndex < 0) infoIndex = itemInfos.Length - 1;
-            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description, infoIndex, this);
+            items[i].SetInfo(itemInfos[infoIndex].sprite, itemInfos[infoIndex].name, itemInfos[infoIndex].description,itemInfos[infoIndex].displayDescription, infoIndex, this);
             infoIndex--;
         }
     }
@@ -248,6 +267,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }
 
         descriptionText.text = items[minIndex].description;
+        displayDescriptionText.text = items[minIndex].displayDescription;
         nameText.text = items[minIndex].nameText.text + "信息";
         currentItemIndex = items[minIndex].itemIndex;
     }
@@ -313,7 +333,6 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             isSelected = true;
             isOpenDescription = true;
             UIManager.Instance.ToggleScale(descriptionBar,Ease.InOutQuart,true,0.5f);
-            SetCenterItem(infoIndex);
         }
         else
         {
@@ -322,15 +341,12 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }
     }
 
-    public void UnLockItemsBlur(int count)
+    private void UnLockItemsBlur(int count)
     {
-        for (int i = 0; i <= count; i++)
+        foreach (var item in items.Where(item => item.infoIndex == count))
         {
-            foreach (var item in items)
-            {
-                item.blurController.SetBlurRadius(item.infoIndex <= count ? 0 : 20);
-                item.canClick = item.infoIndex <= count;
-            }
+            item.blurController.SetBlurRadius(0);
+            item.canClick = true;
         }
     }
 
@@ -361,5 +377,14 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             descriptionBar.SetActive(false);
         });
         isOpenDescription = false;
+    }
+
+    [ContextMenu("解锁全部图片")]
+    public void UnlockPic()
+    {
+        for (int i = 1; i < items.Length+1; i++)
+        {
+            UnLockItemsBlur(i);
+        }
     }
 }
