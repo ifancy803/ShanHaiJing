@@ -333,6 +333,11 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             isSelected = true;
             isOpenDescription = true;
             UIManager.Instance.ToggleScale(descriptionBar,Ease.InOutQuart,true,0.5f);
+        }else if (!isSelected && itemIndex == currentItemIndex && !canClick)
+        {
+            sendIndexToPuzzle.RaiseEvent(infoIndex,this);
+            Debug.Log(infoIndex);
+            //TODO:溶解ui,关闭panel
         }
         else
         {

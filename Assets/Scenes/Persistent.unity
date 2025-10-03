@@ -1269,7 +1269,7 @@ MonoBehaviour:
   adaptationMode: 0
   minScale: 0.5
   maxScale: 2
-  sendIndexToPuzzle: {fileID: 0}
+  sendIndexToPuzzle: {fileID: 11400000, guid: d1d77c3b26ed6b542b080ac6d8e05f8a, type: 2}
 --- !u!114 &823730934
 MonoBehaviour:
   m_ObjectHideFlags: 0
