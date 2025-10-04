@@ -5,20 +5,24 @@ using UnityEngine;
 public class FadePanel : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
-
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = 1;
         }
     }
 
     private void OnEnable()
     {
-        canvasGroup.DOFade(0,1f).SetEase(Ease.InOutQuart);
+        canvasGroup.blocksRaycasts = false;
+        FadeOut();
     }
+    public void FadeOut()
+    {
+        canvasGroup.alpha = 1;
+        canvasGroup.DOFade(0, 1f);
+    }
+    
 }

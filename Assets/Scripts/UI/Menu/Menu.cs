@@ -1,12 +1,11 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using DG.Tweening;
 
-public class MenuPanel : MonoBehaviour
+public class Menu : MonoBehaviour
 {
     private UIControls uiControls;
-
     [Header("广播")] public ObjectEventSO MenuPanelClicked;
 
     private void Awake()
@@ -16,17 +15,17 @@ public class MenuPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        uiControls.UI.Enable();
-        uiControls.UI.Click.started += ClickAnyWhere;
+        uiControls.UI.Clicked.Enable();
+        uiControls.UI.Clicked.started += MenuClicked;
     }
 
     private void OnDisable()
     {
-        uiControls.UI.Click.started -= ClickAnyWhere;
-        uiControls.UI.Disable();
+        uiControls.UI.Clicked.started -= MenuClicked;
+        uiControls.UI.Clicked.Disable();
     }
     
-    private void ClickAnyWhere(InputAction.CallbackContext obj)
+    private void MenuClicked(InputAction.CallbackContext obj)
     {
         MenuPanelClicked.RaiseEvent(null,this);
     }

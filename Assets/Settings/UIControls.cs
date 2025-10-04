@@ -90,12 +90,12 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
     ""maps"": [
         {
             ""name"": ""UI"",
-            ""id"": ""3520b84f-ed6f-4a93-8ae4-63031d3b141b"",
+            ""id"": ""46469465-5b64-4542-827d-b7ebd7ba0f25"",
             ""actions"": [
                 {
-                    ""name"": ""Click"",
+                    ""name"": ""Clicked"",
                     ""type"": ""Button"",
-                    ""id"": ""62b249c8-2da8-48cb-8a6e-7c93c8ac0a35"",
+                    ""id"": ""cec0a2e5-bf63-4d6e-9698-c0a96c96eb19"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -105,12 +105,12 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""34e924fe-a7f8-49a3-be1a-18fcab0dc7e9"",
+                    ""id"": ""009868ec-56d7-440d-ad18-c2afaff4865b"",
                     ""path"": ""<Mouse>/press"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Click"",
+                    ""action"": ""Clicked"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -121,7 +121,7 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
 }");
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
+        m_UI_Clicked = m_UI.FindAction("Clicked", throwIfNotFound: true);
     }
 
     ~@UIControls()
@@ -202,7 +202,7 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
-    private readonly InputAction m_UI_Click;
+    private readonly InputAction m_UI_Clicked;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -215,9 +215,9 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
         /// </summary>
         public UIActions(@UIControls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "UI/Click".
+        /// Provides access to the underlying input action "UI/Clicked".
         /// </summary>
-        public InputAction @Click => m_Wrapper.m_UI_Click;
+        public InputAction @Clicked => m_Wrapper.m_UI_Clicked;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -244,9 +244,9 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
-            @Click.started += instance.OnClick;
-            @Click.performed += instance.OnClick;
-            @Click.canceled += instance.OnClick;
+            @Clicked.started += instance.OnClicked;
+            @Clicked.performed += instance.OnClicked;
+            @Clicked.canceled += instance.OnClicked;
         }
 
         /// <summary>
@@ -258,9 +258,9 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UIActions" />
         private void UnregisterCallbacks(IUIActions instance)
         {
-            @Click.started -= instance.OnClick;
-            @Click.performed -= instance.OnClick;
-            @Click.canceled -= instance.OnClick;
+            @Clicked.started -= instance.OnClicked;
+            @Clicked.performed -= instance.OnClicked;
+            @Clicked.canceled -= instance.OnClicked;
         }
 
         /// <summary>
@@ -302,11 +302,11 @@ public partial class @UIControls: IInputActionCollection2, IDisposable
     public interface IUIActions
     {
         /// <summary>
-        /// Method invoked when associated input action "Click" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Clicked" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnClick(InputAction.CallbackContext context);
+        void OnClicked(InputAction.CallbackContext context);
     }
 }

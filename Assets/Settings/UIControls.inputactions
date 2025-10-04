@@ -4,12 +4,12 @@
     "maps": [
         {
             "name": "UI",
-            "id": "3520b84f-ed6f-4a93-8ae4-63031d3b141b",
+            "id": "46469465-5b64-4542-827d-b7ebd7ba0f25",
             "actions": [
                 {
-                    "name": "Click",
+                    "name": "Clicked",
                     "type": "Button",
-                    "id": "62b249c8-2da8-48cb-8a6e-7c93c8ac0a35",
+                    "id": "cec0a2e5-bf63-4d6e-9698-c0a96c96eb19",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -19,12 +19,12 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "34e924fe-a7f8-49a3-be1a-18fcab0dc7e9",
+                    "id": "009868ec-56d7-440d-ad18-c2afaff4865b",
                     "path": "<Mouse>/press",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Click",
+                    "action": "Clicked",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

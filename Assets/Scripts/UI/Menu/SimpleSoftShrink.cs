@@ -3,7 +3,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class  PanelCenterDisappear : MonoBehaviour
+public class SimpleSoftShrink : MonoBehaviour
 {
     [Header("动画设置")]
     public float shrinkDuration = 1f;
@@ -210,7 +210,6 @@ public class  PanelCenterDisappear : MonoBehaviour
     public void ExpandFromCenter(float duration = -1, System.Action onComplete = null)
     {
         if (duration <= 0) duration = shrinkDuration;
-        
         
         tweenSequence?.Kill();
         
