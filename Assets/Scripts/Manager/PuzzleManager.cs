@@ -86,7 +86,7 @@ public class PuzzleManager : MonoBehaviour
         {
             return; // 如果有引用未设置, 则停止运行, 防止报错
         }
-
+        GeneratePuzzle();
     }
 
     /// <summary>
