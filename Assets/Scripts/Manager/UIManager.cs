@@ -6,12 +6,17 @@ public class UIManager : Singleton<UIManager>
 {
     public GameObject imageListPanel;
     public SimpleSoftShrink menuPanel;
+    public FadePanel fadePanel;
     public ArrayList picIndexList = new ArrayList();
 
     [Header("广播")] public ObjectEventSO closeImageListPanelEvent;
 
     [ContextMenu("打开角色选择面板")]
-    public void OpenImageListPanel() { ToggleScale(imageListPanel,Ease.InOutQuart,true,1); }
+    public void OpenImageListPanel()
+    {
+        fadePanel.FadeOut();
+        ToggleScale(imageListPanel,Ease.InOutQuart,true,1);
+    }
 
     [ContextMenu("关闭角色选择面板")]
     public void CloseImageListPanel()

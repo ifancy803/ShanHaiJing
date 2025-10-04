@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,7 +17,6 @@ public class Menu : MonoBehaviour
     {
         uiControls.UI.Clicked.Enable();
         uiControls.UI.Clicked.started += MenuClicked;
-        //TODO:fade动画
     }
 
     private void OnDisable()

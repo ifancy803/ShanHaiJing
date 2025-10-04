@@ -43,7 +43,6 @@ public class SimpleSoftShrink : MonoBehaviour
         }
         
         CreateSoftMasks();
-        Debug.Log($"初始化完成，创建了 {softnessLayers} 个柔化层");
     }
 
     void CreateSoftMasks()
@@ -151,8 +150,6 @@ public class SimpleSoftShrink : MonoBehaviour
     {
         if (duration <= 0) duration = shrinkDuration;
         
-        Debug.Log($"开始收缩动画，持续时间: {duration}秒");
-        
         tweenSequence?.Kill();
         tweenSequence = DOTween.Sequence();
         
@@ -190,7 +187,6 @@ public class SimpleSoftShrink : MonoBehaviour
         
         tweenSequence.OnComplete(() => 
         {
-            Debug.Log("收缩动画完成");
             
             // 关键修复：动画完成后处理遮罩
             if (disableMasksAfterShrink)
@@ -214,8 +210,6 @@ public class SimpleSoftShrink : MonoBehaviour
     public void ExpandFromCenter(float duration = -1, System.Action onComplete = null)
     {
         if (duration <= 0) duration = shrinkDuration;
-        
-        Debug.Log($"开始展开动画，持续时间: {duration}秒");
         
         tweenSequence?.Kill();
         
@@ -254,7 +248,6 @@ public class SimpleSoftShrink : MonoBehaviour
         
         tweenSequence.OnComplete(() => 
         {
-            Debug.Log("展开动画完成");
             onComplete?.Invoke();
             tweenSequence = null;
         });
