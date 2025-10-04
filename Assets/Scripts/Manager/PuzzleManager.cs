@@ -87,7 +87,7 @@ public class PuzzleManager : MonoBehaviour
             return; // 如果有引用未设置, 则停止运行, 防止报错
         }
 
-        GeneratePuzzle();
+
     }
 
     /// <summary>
@@ -102,7 +102,9 @@ public class PuzzleManager : MonoBehaviour
         puzzleSlots.Clear();
         draggablePieces.Clear(); // 清空列表，准备存储新的拼图块
 
-        
+        if (imgIndex < 3) cols = rows = 3;
+        else if (imgIndex < 6) cols = rows = 4;
+        else if (imgIndex < 9) cols = rows = 5;
         
         int pieceWidth = image.width / cols ;
         int pieceHeight = image.height / rows ;
@@ -116,8 +118,7 @@ public class PuzzleManager : MonoBehaviour
         float startY = slotAreaParent.position.y + gridWorldHeight / 2f - pieceWorldHeight / 2f;
 
         int pieceCounter = 0; // 计数器, 同时作为ID
-
-
+        
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -136,8 +137,7 @@ public class PuzzleManager : MonoBehaviour
                 PuzzleSlot slot = slotObject.GetComponent<PuzzleSlot>();
                 slot.slotId = pieceCounter;
                 puzzleSlots.Add(slot);
-                
-                
+
                 // 从当前选中的 image 中裁剪出像素
                 Color[] pixels = image.GetPixels(x * pieceWidth, (rows - 1 - y) * pieceHeight, pieceWidth, pieceHeight);
                 Texture2D pieceTexture = new Texture2D(pieceWidth, pieceHeight);
@@ -221,5 +221,12 @@ public class PuzzleManager : MonoBehaviour
         imgIndex++;
         var imgid = imgIndex - 1;
         afterPuzzleCompletionEvent.RaiseEvent(imgid, this);
+    }
+
+    public void GameStart(int index)
+    {
+        imgIndex = index;
+        GeneratePuzzle();
+        
     }
 }
