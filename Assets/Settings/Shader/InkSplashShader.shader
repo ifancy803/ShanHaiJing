@@ -2,103 +2,104 @@ Shader "Custom/InkSplash"
 {
     Properties
     {
-        _Color ("Tint Color", Color) = (1,1,1,1) // 纹理的整体颜色
+        _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
-        _OutlineColor ("Ink Outline Color", Color) = (0,0,0,1) // 边缘水墨的颜色
-        _OutlineWidth ("Outline Width", Range(0, 0.1)) = 0.05 // 边缘水墨的厚度 (调试时可以设大一点)
-        _InkAmount ("Ink Amount", Range(0,1)) = 0 // 控制边缘水墨的扩散/显示程度 (0=无水墨, 1=全水墨)
-        _InkSpreadSharpness ("Ink Spread Sharpness", Range(1, 30)) = 10 // 控制边缘水墨的锐度/平滑度
+        _OutlineColor ("Outline Color", Color) = (0,0,0,1)
+        _OutlineWidth ("Outline Width", Range(0, 0.1)) = 0.01
+        _InkAmount ("Ink Amount", Range(0,1)) = 0 // 控制水墨扩散程度
+        _InkSpreadSharpness ("Ink Spread Sharpness", Range(1, 30)) = 10 // 控制水墨边缘锐度
     }
     SubShader
     {
         Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 100
 
-        Blend SrcAlpha OneMinusSrcAlpha // 标准的透明度混合，让水墨可以叠加在原有内容上
-        Cull Off // 关闭背面剔除，确保无论从哪个方向看都显示
-        Lighting Off // 关闭光照，确保颜色不受场景光照影响
+        // 确保混合模式正确处理透明度
+        Blend SrcAlpha OneMinusSrcAlpha // 这是标准的透明度混合
+        // 如果你的图片本身没有透明度，或者你希望水墨效果是额外的叠加，可以考虑：
+        // Blend One OneMinusSrcAlpha // 叠加模式，水墨像墨汁一样“覆盖”在图片上
+        // Blend One Zero // 不透明模式，直接替换原有颜色
 
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_fog // 启用雾效编译（如果不需要可以删除，但通常无害）
+            #pragma multi_compile_fog
 
-            #include "UnityCG.cginc" // 包含Unity内置的CG函数库
+            #include "UnityCG.cginc"
 
-            // 应用程序到顶点着色器的数据结构
             struct appdata
             {
-                float4 vertex : POSITION;    // 顶点位置
-                float2 uv : TEXCOORD0;       // UV坐标
-                float4 color : COLOR;        // 顶点颜色 (SpriteRenderer会通过此项传递)
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
             };
 
-            // 顶点着色器到片段着色器的数据结构
             struct v2f
             {
-                float2 uv : TEXCOORD0;       // UV坐标
-                UNITY_FOG_COORDS(1)          // 雾效坐标
-                float4 vertex : SV_POSITION; // 裁剪空间中的顶点位置
-                fixed4 color : COLOR;        // 顶点颜色
+                float2 uv : TEXCOORD0;
+                UNITY_FOG_COORDS(1)
+                float4 vertex : SV_POSITION;
             };
 
-            // 着色器属性（由Inspector设置，并在着色器中声明为全局变量）
             sampler2D _MainTex;
-            float4 _MainTex_ST; // 纹理平铺和偏移
-            fixed4 _Color;      // 纹理整体颜色
-            fixed4 _OutlineColor; // 描边颜色
-            float _OutlineWidth;  // 描边宽度
-            float _InkAmount;     // 水墨量（0到1，控制水墨的显示强度）
-            float _InkSpreadSharpness; // 水墨边缘的锐度
+            float4 _MainTex_ST;
+            float4 _Color;
+            float4 _OutlineColor;
+            float _OutlineWidth;
+            float _InkAmount;
+            float _InkSpreadSharpness; // 新增的锐度属性
 
-            // 顶点着色器函数
             v2f vert (appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex); // 将顶点从模型空间转换到裁剪空间
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);     // 应用纹理平铺和偏移
-                UNITY_TRANSFER_FOG(o,o.vertex);           // 传递雾效数据
-                o.color = v.color;                        // 传递顶点颜色
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
             }
 
-            // 片段着色器
             fixed4 frag (v2f i) : SV_Target
             {
-                // 采样原始纹理，并应用Tint Color和顶点颜色
-                fixed4 texColor = tex2D(_MainTex, i.uv) * _Color * i.color; 
+                // 采样原始纹理
+                fixed4 col = tex2D(_MainTex, i.uv) * _Color;
+
+                // 计算水墨效果的alpha值
+                float dist = distance(i.uv, float2(0.5, 0.5)); // 距离中心点的UV距离
                 
-                // ------------------ 最简单的边缘透明度控制 START ------------------
+                // 这里的逻辑需要改变：
+                // 当_InkAmount为0时，inkEffectAlpha应该是0，不影响col.a
+                // 当_InkAmount为1时，inkEffectAlpha应该根据dist和sharpness来计算，形成水墨效果
+                
+                // 新的水墨效果计算
+                // 这个表达式的目的是：当_InkAmount越大，inkEffectAlpha才越大
+                // 并且通过_InkSpreadSharpness控制扩散的边缘
+                float inkEffectAlpha = saturate((_InkAmount - (dist * (1 + (1 - _InkAmount) * 0.5))) * _InkSpreadSharpness);
 
-                // 1. 计算每个像素离最近的矩形边缘有多远
-                float borderX = min(i.uv.x, 1.0 - i.uv.x); // 离左右边界的距离
-                float borderY = min(i.uv.y, 1.0 - i.uv.y); // 离上下边界的距离
-                float distToNearestEdge = min(borderX, borderY); // 离最近矩形边缘的距离
+                // 最终的alpha = 原始图片alpha * (1 - inkEffectAlpha) + inkEffectAlpha
+                // 这样当inkEffectAlpha为0时，最终alpha = 原始图片alpha
+                // 当inkEffectAlpha为1时，最终alpha = 1 (完全不透明的水墨)
+                // 这将使水墨效果像覆盖在原图上一样逐渐显现
+                col.a = lerp(col.a, 1.0, inkEffectAlpha); // 将原始alpha与1（水墨部分不透明）进行插值
 
-                float inkEffectAlpha = 0; // 默认水墨效果透明度为0 (无水墨)
+                // 如果你的原始图片本身没有透明度（完全不透明），并且你希望水墨是一种“替换”效果，
+                // 可以直接 col.a = inkEffectAlpha; 但这会导致_InkAmount=0时仍然透明。
+                // 因此上面的 lerp 是一个更好的通用方案。
 
-                // 如果像素在 _OutlineWidth 定义的描边区域内
-                if (distToNearestEdge < _OutlineWidth) 
+                // 描边效果 (保持不变)
+                float outline = 0;
+                if(i.uv.x < _OutlineWidth || i.uv.x > (1 - _OutlineWidth) ||
+                   i.uv.y < _OutlineWidth || i.uv.y > (1 - _OutlineWidth))
                 {
-                    // **核心简化：让描边区域的透明度直接等于 _InkAmount**
-                    inkEffectAlpha = _InkAmount; 
-                    
-                    // 确保透明度在0到1之间
-                    inkEffectAlpha = saturate(inkEffectAlpha); 
+                    outline = 1;
                 }
-                
-                // ------------------ 最简单的边缘透明度控制 END ------------------
+                // 如果水墨效果不透明，描边就用描边色
+                // 否则，描边是原始颜色和描边色的混合
+                col = lerp(col, _OutlineColor, outline); 
 
-                // 2. 将水墨效果 (描边颜色) 混合到最终颜色中
-                // 只有 inkEffectAlpha > 0 的地方会显示 _OutlineColor
-                fixed4 finalColor = texColor; // 默认是原始纹理颜色
-                finalColor.rgb = lerp(finalColor.rgb, _OutlineColor.rgb, inkEffectAlpha); // 混合RGB颜色
-                finalColor.a = lerp(finalColor.a, _OutlineColor.a, inkEffectAlpha);       // 混合Alpha值
 
-                UNITY_APPLY_FOG(i.fogCoord, finalColor); // 应用雾效（如果启用）
-                return finalColor;
+                UNITY_APPLY_FOG(i.fogCoord, col);
+                return col;
             }
             ENDCG
         }

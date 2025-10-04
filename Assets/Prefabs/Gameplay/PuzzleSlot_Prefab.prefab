@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5708051630263851100}
   - component: {fileID: 2219871454065751166}
   - component: {fileID: 2818136259880379502}
-  - component: {fileID: 3166052110646903576}
+  - component: {fileID: -6303383093306317347}
   m_Layer: 0
   m_Name: PuzzleSlot_Prefab
   m_TagString: Untagged
@@ -102,7 +102,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3166052110646903576
+--- !u!114 &-6303383093306317347
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,10 +111,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7961442579909042726}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c845739ad66b9264f907783bc95ee17a, type: 3}
+  m_Script: {fileID: 11500000, guid: ab339b8535eb6cb4d96f5316fc473f35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseSlotMaterial: {fileID: 2100000, guid: 5cf367121a5d12344a9901389eddd88e, type: 2}
-  defaultInnerColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.3}
-  defaultOutlineColor: {r: 0, g: 0, b: 0, a: 1}
-  defaultOutlineWidth: 0.03
+  inkSpreadDuration: 0.5
