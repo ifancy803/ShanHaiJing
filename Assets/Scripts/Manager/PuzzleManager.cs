@@ -121,7 +121,7 @@ public class PuzzleManager : MonoBehaviour
         {
             for (int x = 0; x < cols; x++)
             {
-                Vector3 slotPosition = new Vector3(startX + x * pieceWorldWidth, startY - y * pieceWorldHeight, 0);
+                Vector3 slotPosition = new Vector3(startX + x * pieceWorldWidth, startY - y * pieceWorldHeight, 100);
                 GameObject slotObject = Instantiate(slotPrefab, slotPosition, Quaternion.identity, slotAreaParent);
                 slotObject.name = $"Slot_{x}_{y}";
 
@@ -147,7 +147,7 @@ public class PuzzleManager : MonoBehaviour
                 // 随机放置拼图块
                 float randomX = Random.Range(spawnAreaCenter.position.x - spawnAreaSize.x / 2, spawnAreaCenter.position.x + spawnAreaSize.x / 2);
                 float randomY = Random.Range(spawnAreaCenter.position.y - spawnAreaSize.y / 2, spawnAreaCenter.position.y + spawnAreaSize.y / 2);
-                GameObject pieceObject = Instantiate(piecePrefab, new Vector3(randomX, randomY, 0), Quaternion.identity, pieceAreaParent);
+                GameObject pieceObject = Instantiate(piecePrefab, new Vector3(randomX, randomY, 95), Quaternion.identity, pieceAreaParent);
                 pieceObject.name = $"Piece_{x}_{y}";
                 
                 pieceObject.GetComponent<SpriteRenderer>().sprite = pieceSprite;
@@ -216,15 +216,14 @@ public class PuzzleManager : MonoBehaviour
  
         // 如果所有拼图块都已锁定，则拼图完成
         Debug.Log("恭喜! 拼图已全部完成!");
+        afterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
         imgIndex++;
-        var imgid = imgIndex - 1;
-        afterPuzzleCompletionEvent.RaiseEvent(imgid, this);
+        UIManager.Instance.OpenImageListPanel();
     }
 
     public void GameStart(int index)
     {
         imgIndex = index;
         GeneratePuzzle();
-        
     }
 }
