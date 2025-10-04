@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1668335709341591062}
   - component: {fileID: 914720240753427865}
   - component: {fileID: -3755752148144890988}
+  - component: {fileID: -6401028068041445973}
   m_Layer: 0
   m_Name: Draggable_Prefab
   m_TagString: Untagged
@@ -103,7 +104,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7c3ef07913d7bc646bafe581bce5ddda, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -151,3 +152,16 @@ MonoBehaviour:
   targetSlotTransform: {fileID: 0}
   sortingOrderWhileDragging: 10
   snapThreshold: 0.7
+--- !u!114 &-6401028068041445973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4598890856990747899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab339b8535eb6cb4d96f5316fc473f35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inkSpreadDuration: 0.5
