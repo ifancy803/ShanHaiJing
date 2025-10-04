@@ -66,15 +66,12 @@ public class PuzzleManager : MonoBehaviour
             {
                 Debug.LogWarning($"sourceImageNums 列表中索引 {index} 处的图片为空，已跳过添加到字典。");
             }
-            index++; // 无论图片是否为空，索引都应该递增
+            index++;
         }
-
         if (sourceImageToIndexNums.ContainsKey(imgIndex))
         {
             image = sourceImageToIndexNums[imgIndex];
         }
-        
-        
     }
 
     void Start()
@@ -217,13 +214,16 @@ public class PuzzleManager : MonoBehaviour
         // 如果所有拼图块都已锁定，则拼图完成
         Debug.Log("恭喜! 拼图已全部完成!");
         afterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
-        imgIndex++;
         UIManager.Instance.OpenImageListPanel();
     }
 
     public void GameStart(int index)
     {
         imgIndex = index;
+        if (sourceImageToIndexNums.ContainsKey(imgIndex))
+        {
+            image = sourceImageToIndexNums[imgIndex];
+        }
         GeneratePuzzle();
     }
 }

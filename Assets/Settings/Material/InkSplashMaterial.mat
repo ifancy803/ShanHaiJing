@@ -61,6 +61,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BorderFadeStart: 0.01
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -69,7 +70,8 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _InkAmount: 0
-    - _InkSpreadSharpness: 10
+    - _InkOpacity: 1
+    - _InkSpreadSharpness: 20
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
