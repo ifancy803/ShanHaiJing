@@ -91,6 +91,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float screenScale = 1f;
     private Vector2 originalScreenSize;
     private Vector2 currentScreenSize;
+    private bool isClick = false;
     
     public UIImageDissolveController dissolveController;
     
@@ -110,6 +111,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private void OnEnable()
     {
         if (items == null || items.Length == 0) Init();
+        isClick = false;
         CalculateScreenScale();
         RefreshUI();
         if(UIManager.Instance.picIndexList.Count > 0)
@@ -139,7 +141,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private void Init()
     {
         if (items != null) return;
-
+        
         displayWidth = (displayNumber - 1) * itemSpace;
         items = new SelectHorizontalScrollItem[displayNumber];
 
@@ -318,7 +320,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if(isOpenDescription)
+        if(isOpenDescription||isClick)
             return;
         EventSystem.current.SetSelectedGameObject(gameObject);
         isDrag = false;
@@ -326,7 +328,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(isOpenDescription)
+        if(isOpenDescription||isClick)
             return;
         EventSystem.current.SetSelectedGameObject(gameObject);
         isDrag = true;
@@ -334,7 +336,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(isOpenDescription)
+        if(isOpenDescription || isClick)
             return;
         EventSystem.current.SetSelectedGameObject(gameObject);
         isSelectMove = false;
@@ -359,6 +361,8 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }
         else
         {
+            if(isClick)return;
+            isClick = true;
             UnLockItemsBlur(UIManager.Instance.picIndexList);
             sendIndexToPuzzle.RaiseEvent(infoIndex, this);
             //TODO:关闭panel的溶解shader

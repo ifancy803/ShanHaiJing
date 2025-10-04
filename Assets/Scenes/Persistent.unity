@@ -2625,6 +2625,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Description
       objectReference: {fileID: 0}
+    - target: {fileID: 9068691603334202171, guid: 10cf8dfb5f800b042b8483acc61d976f, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+    - target: {fileID: 9068691603334202171, guid: 10cf8dfb5f800b042b8483acc61d976f, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2722,6 +2730,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197213905154600056, guid: 4d61f8428df5ae549a3099d5266211a1, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+    - target: {fileID: 6197213905154600056, guid: 4d61f8428df5ae549a3099d5266211a1, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2814,6 +2830,14 @@ PrefabInstance:
     - target: {fileID: 3255219464921801868, guid: 8cd25728cec6a1d47b28bc9d36d27b2a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5735025546025551779, guid: 8cd25728cec6a1d47b28bc9d36d27b2a, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+    - target: {fileID: 5735025546025551779, guid: 8cd25728cec6a1d47b28bc9d36d27b2a, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5773034682582044824, guid: 8cd25728cec6a1d47b28bc9d36d27b2a, type: 3}
       propertyPath: m_Name
@@ -2920,6 +2944,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6293224264181167364, guid: 41ccb009fb0f4cf47990c9c9f20bd409, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+    - target: {fileID: 6293224264181167364, guid: 41ccb009fb0f4cf47990c9c9f20bd409, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2933,6 +2965,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 619552470}
     m_Modifications:
+    - target: {fileID: 524417188912764131, guid: 47aa2cd836f2f044eb50d64f1bf685c1, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+    - target: {fileID: 524417188912764131, guid: 47aa2cd836f2f044eb50d64f1bf685c1, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6888188877979696272, guid: 47aa2cd836f2f044eb50d64f1bf685c1, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3030,6 +3070,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 297992789}
     m_Modifications:
+    - target: {fileID: 1684721222695415277, guid: 69414a5b319d3014c82fe3217c4082c5, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+    - target: {fileID: 1684721222695415277, guid: 69414a5b319d3014c82fe3217c4082c5, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2291285872386588337, guid: 69414a5b319d3014c82fe3217c4082c5, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
