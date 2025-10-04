@@ -5,14 +5,12 @@ using UnityEngine;
 public class UIManager : Singleton<UIManager>
 {
     public GameObject imageListPanel;
-    public PanelCenterDisappear menuPanel;
-    
     public ArrayList picIndexList = new ArrayList();
 
     [Header("广播")] public ObjectEventSO closeImageListPanelEvent;
 
     [ContextMenu("打开角色选择面板")]
-    public void OpenImageListPanel() { ToggleScale(imageListPanel,Ease.OutElastic,true,0.5f); }
+    public void OpenImageListPanel() { ToggleScale(imageListPanel,Ease.OutElastic,true,1); }
 
     [ContextMenu("关闭角色选择面板")]
     public void CloseImageListPanel()
@@ -56,23 +54,6 @@ public class UIManager : Singleton<UIManager>
             ScaleUp(obj,et,duration);
         else
             ScaleDown(obj,et,duration);
-    }
-
-    public void MenuPanelClicked(object value)
-    {
-        StartCoroutine(CloseMenuPanel());
-    }
-    
-    IEnumerator CloseMenuPanel()
-    {
-        // 消失动画
-        menuPanel.ShrinkToCenter(1f, () => 
-        {
-            menuPanel.gameObject.SetActive(false);
-            OpenImageListPanel();
-        });
-
-        yield return null;
     }
 
     public void SetPicIndex(int index)
