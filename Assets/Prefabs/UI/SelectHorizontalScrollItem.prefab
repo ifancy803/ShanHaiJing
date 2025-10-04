@@ -431,7 +431,11 @@ MonoBehaviour:
   m_text: "\u540D\u79F0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+<<<<<<< HEAD
+  m_sharedMaterial: {fileID: -5404560494706155323, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+=======
   m_sharedMaterial: {fileID: -2092520775004920477, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+>>>>>>> 07b8286dc45bbe106e963b9eb938ccd4af64ddda
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
