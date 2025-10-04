@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SelectHorizontalScrollItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     [SerializeField,Tooltip("图片")] 
-    private Image image;
+    public Image image;
     [SerializeField,Tooltip("名称文字")] 
     public TMP_Text nameText;
     [SerializeField,Tooltip("画布组")] 
