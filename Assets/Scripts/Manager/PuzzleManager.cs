@@ -11,15 +11,15 @@ public class PuzzleManager : MonoBehaviour
 
     [Header("拼图基础设置")]
     [Tooltip("拼图的行数")]
-    public int rows = 4;
+    public int rows = 3;
     [Tooltip("拼图的列数")]
     public int cols = 3;
 
     private Texture2D image; // 实际用于生成拼图的图片
 
-    private bool isFirstPlay = true;
-
     private int imgIndex = 0;
+
+    public float PPUvalue = 0f;
 
     [Header("预制体 (Prefabs)")]
     [Tooltip("拼图块的预制体 (必须带SpriteRenderer和DraggablePiece脚本)")]
@@ -69,16 +69,12 @@ public class PuzzleManager : MonoBehaviour
             index++; // 无论图片是否为空，索引都应该递增
         }
 
-        // 根据 isFirstPlay 逻辑决定使用哪张图片
-        if (!isFirstPlay) imgIndex++;
-
-
         if (sourceImageToIndexNums.ContainsKey(imgIndex))
         {
             image = sourceImageToIndexNums[imgIndex];
         }
         
-
+        
     }
 
     void Start()
@@ -91,7 +87,7 @@ public class PuzzleManager : MonoBehaviour
             return; // 如果有引用未设置, 则停止运行, 防止报错
         }
 
-        GeneratePuzzle();
+
     }
 
     /// <summary>
@@ -106,12 +102,15 @@ public class PuzzleManager : MonoBehaviour
         puzzleSlots.Clear();
         draggablePieces.Clear(); // 清空列表，准备存储新的拼图块
 
+        if (imgIndex < 3) cols = rows = 3;
+        else if (imgIndex < 6) cols = rows = 4;
+        else if (imgIndex < 9) cols = rows = 5;
+        
+        int pieceWidth = image.width / cols ;
+        int pieceHeight = image.height / rows ;
 
-        int pieceWidth = image.width / cols;
-        int pieceHeight = image.height / rows;
-
-        float pieceWorldWidth = (float)pieceWidth / 100f; // 假设 PPU 是 100，即 100 像素 = 1 世界单位
-        float pieceWorldHeight = (float)pieceHeight / 100f;
+        float pieceWorldWidth = (float)pieceWidth / PPUvalue; // 假设 PPU 是 100，即 100 像素 = 1 世界单位
+        float pieceWorldHeight = (float)pieceHeight / PPUvalue;
 
         float gridWorldWidth = cols * pieceWorldWidth;
         float gridWorldHeight = rows * pieceWorldHeight;
@@ -119,13 +118,11 @@ public class PuzzleManager : MonoBehaviour
         float startY = slotAreaParent.position.y + gridWorldHeight / 2f - pieceWorldHeight / 2f;
 
         int pieceCounter = 0; // 计数器, 同时作为ID
-
-
+        
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
             {
-                // --- 创建卡槽 (Slot) ---
                 Vector3 slotPosition = new Vector3(startX + x * pieceWorldWidth, startY - y * pieceWorldHeight, 0);
                 GameObject slotObject = Instantiate(slotPrefab, slotPosition, Quaternion.identity, slotAreaParent);
                 slotObject.name = $"Slot_{x}_{y}";
@@ -141,21 +138,41 @@ public class PuzzleManager : MonoBehaviour
                 slot.slotId = pieceCounter;
                 puzzleSlots.Add(slot);
 
-                // --- 创建拼图块 (Piece) ---
-                
                 // 从当前选中的 image 中裁剪出像素
                 Color[] pixels = image.GetPixels(x * pieceWidth, (rows - 1 - y) * pieceHeight, pieceWidth, pieceHeight);
                 Texture2D pieceTexture = new Texture2D(pieceWidth, pieceHeight);
                 pieceTexture.SetPixels(pixels);
                 pieceTexture.Apply();
 
-                Sprite pieceSprite = Sprite.Create(pieceTexture, new Rect(0, 0, pieceWidth, pieceHeight), new Vector2(0.5f, 0.5f), 100f);
+                Sprite pieceSprite = Sprite.Create(pieceTexture, new Rect(0, 0, pieceWidth, pieceHeight), new Vector2(0.5f, 0.5f), PPUvalue);
 
                 // 随机放置拼图块
                 float randomX = Random.Range(spawnAreaCenter.position.x - spawnAreaSize.x / 2, spawnAreaCenter.position.x + spawnAreaSize.x / 2);
                 float randomY = Random.Range(spawnAreaCenter.position.y - spawnAreaSize.y / 2, spawnAreaCenter.position.y + spawnAreaSize.y / 2);
                 GameObject pieceObject = Instantiate(piecePrefab, new Vector3(randomX, randomY, 0), Quaternion.identity, pieceAreaParent);
                 pieceObject.name = $"Piece_{x}_{y}";
+                
+                pieceObject.GetComponent<SpriteRenderer>().sprite = pieceSprite;
+
+                //BoxCollider2D 的大小
+                BoxCollider2D pieceCollider = pieceObject.GetComponent<BoxCollider2D>();
+                if (pieceCollider != null)
+                {
+                    // 确保碰撞器没有自动缩放
+                    pieceCollider.autoTiling = false; 
+                    pieceCollider.offset = Vector2.zero; // 确保碰撞器的中心点与GameObject的中心点对齐
+                    
+                    float colliderPadding = 0.1f; // 增加边距
+                    pieceCollider.size = new Vector2(pieceWorldWidth + colliderPadding, pieceWorldHeight + colliderPadding); 
+                    
+                }
+                else
+                {
+                    Debug.LogWarning($"Piece_{x}_{y} 缺少 BoxCollider2D 组件，无法动态调整碰撞范围。");
+                }
+                
+                
+                
                 pieceObject.GetComponent<SpriteRenderer>().sprite = pieceSprite;
 
                 // 关联拼图块和对应的卡槽
@@ -204,5 +221,12 @@ public class PuzzleManager : MonoBehaviour
         imgIndex++;
         var imgid = imgIndex - 1;
         afterPuzzleCompletionEvent.RaiseEvent(imgid, this);
+    }
+
+    public void GameStart(int index)
+    {
+        imgIndex = index;
+        GeneratePuzzle();
+        
     }
 }

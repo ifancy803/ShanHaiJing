@@ -26,10 +26,7 @@ public class DraggablePiece : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalSortingOrder = spriteRenderer.sortingOrder;
     
-        // Fix for CS0618 warning: Use FindFirstObjectByType or FindAnyObjectByType
-        // puzzleManager = FindObjectOfType<PuzzleManager>(); // Old, deprecated line
-        puzzleManager = FindFirstObjectByType<PuzzleManager>(); // Recommended replacement
-        // OR: puzzleManager = FindAnyObjectByType<PuzzleManager>(); // Faster, if any instance is fine
+        puzzleManager = FindFirstObjectByType<PuzzleManager>(); 
 
         if (puzzleManager == null)
         {
