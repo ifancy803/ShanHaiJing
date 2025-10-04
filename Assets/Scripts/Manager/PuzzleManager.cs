@@ -2,63 +2,48 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Random = UnityEngine.Random; // 引入 Random 命名空间是为了明确使用 UnityEngine 的 Random
+using Random = UnityEngine.Random;
 
 public class PuzzleManager : MonoBehaviour
 {
-    public List<Texture2D> sourceImageNums; // 在 Inspector 中设置的图片列表
-    private Dictionary<int,Texture2D> sourceImageToIndexNums; // 运行时使用的字典
+    public List<Texture2D> sourceImageNums;
+    private Dictionary<int,Texture2D> sourceImageToIndexNums;
 
     [Header("拼图基础设置")]
-    [Tooltip("拼图的行数")]
     public int rows = 3;
-    [Tooltip("拼图的列数")]
     public int cols = 3;
 
-    private Texture2D image; // 实际用于生成拼图的图片
-
+    private Texture2D image;
     private int imgIndex = 0;
-
     public float PPUvalue = 0f;
 
     [Header("预制体 (Prefabs)")]
     [Tooltip("拼图块的预制体 (必须带SpriteRenderer和DraggablePiece脚本)")]
     public GameObject piecePrefab;
-    [Tooltip("卡槽的预制体 (必须带有SpriteRenderer和PuzzleSlot脚本)")]
+    [Tooltip("卡槽的预制体 (必须带有SpriteRenderer、PuzzleSlot和PuzzleSlotOutline脚本)")]
     public GameObject slotPrefab;
 
     [Header("场景中的父物体")]
-    [Tooltip("一个空物体, 用来存放所有生成的拼图块, 保持场景整洁")]
     public Transform pieceAreaParent;
-    [Tooltip("一个空物体, 用来存放所有生成的卡槽, 作为网格的中心")]
     public Transform slotAreaParent;
 
     [Header("拼图块随机生成区域")]
-    [Tooltip("一个空物体, 标记随机区域的中心点")]
     public Transform spawnAreaCenter;
-    [Tooltip("随机区域的尺寸 (宽和高)")]
     public Vector2 spawnAreaSize = new Vector2(5, 5);
 
     [Header("广播")] 
     public IntEventSO afterPuzzleCompletionEvent;
     
-
-    // 运行时使用的私有列表
-    private List<DraggablePiece> draggablePieces = new List<DraggablePiece>(); // 存储所有生成的 DraggablePiece
+    private List<DraggablePiece> draggablePieces = new List<DraggablePiece>();
     private List<PuzzleSlot> puzzleSlots = new List<PuzzleSlot>();
 
     void Awake()
     {
-        // === 修复点在这里！ ===
-        // 在使用字典之前，先实例化它
         sourceImageToIndexNums = new Dictionary<int, Texture2D>();
-        // ===================
-
         int index = 0;
-        // 遍历 Inspector 中设置的 sourceImageNums 列表，填充到字典中
-        foreach(Texture2D img in sourceImageNums) // 将循环变量名从 sourceImage 改为 img，避免与 public sourceImage 混淆
+        foreach(Texture2D img in sourceImageNums)
         {
-            if (img != null) // 检查图片是否为空，防止列表中有空槽
+            if (img != null)
             {
                 sourceImageToIndexNums.Add(index, img);
             }
@@ -66,27 +51,22 @@ public class PuzzleManager : MonoBehaviour
             {
                 Debug.LogWarning($"sourceImageNums 列表中索引 {index} 处的图片为空，已跳过添加到字典。");
             }
-            index++; // 无论图片是否为空，索引都应该递增
+            index++;
         }
 
         if (sourceImageToIndexNums.ContainsKey(imgIndex))
         {
             image = sourceImageToIndexNums[imgIndex];
         }
-        
-        
     }
 
     void Start()
     {
-        // 检查所有必要的引用是否已在编辑器中设置好
-        // 注意：这里 AreReferencesAssigned() 检查的是 image 字段，而不是最初的 sourceImage 字段。
-        // 这是更合理的，因为 image 才是真正用于生成拼图的图片。
         if (!AreReferencesAssigned())
         {
-            return; // 如果有引用未设置, 则停止运行, 防止报错
+            enabled = false; // 禁用此组件以防止进一步错误
+            return;
         }
-
     }
 
     /// <summary>
@@ -94,12 +74,11 @@ public class PuzzleManager : MonoBehaviour
     /// </summary>
     void GeneratePuzzle()
     {
-        // 清理旧的拼图块和卡槽
         foreach (Transform child in pieceAreaParent) Destroy(child.gameObject);
         foreach (Transform child in slotAreaParent) Destroy(child.gameObject);
         
         puzzleSlots.Clear();
-        draggablePieces.Clear(); // 清空列表，准备存储新的拼图块
+        draggablePieces.Clear();
 
         if (imgIndex < 3) cols = rows = 3;
         else if (imgIndex < 6) cols = rows = 4;
@@ -108,7 +87,7 @@ public class PuzzleManager : MonoBehaviour
         int pieceWidth = image.width / cols ;
         int pieceHeight = image.height / rows ;
 
-        float pieceWorldWidth = (float)pieceWidth / PPUvalue; // 假设 PPU 是 100，即 100 像素 = 1 世界单位
+        float pieceWorldWidth = (float)pieceWidth / PPUvalue;
         float pieceWorldHeight = (float)pieceHeight / PPUvalue;
 
         float gridWorldWidth = cols * pieceWorldWidth;
@@ -116,7 +95,7 @@ public class PuzzleManager : MonoBehaviour
         float startX = slotAreaParent.position.x - gridWorldWidth / 2f + pieceWorldWidth / 2f;
         float startY = slotAreaParent.position.y + gridWorldHeight / 2f - pieceWorldHeight / 2f;
 
-        int pieceCounter = 0; // 计数器, 同时作为ID
+        int pieceCounter = 0;
         
         for (int y = 0; y < rows; y++)
         {
@@ -129,15 +108,22 @@ public class PuzzleManager : MonoBehaviour
                 SpriteRenderer sr = slotObject.GetComponent<SpriteRenderer>();
                 if (sr != null)
                 {
-                    sr.drawMode = SpriteDrawMode.Sliced; // 将绘制模式设置为 Sliced，这样修改 size 才有效
-                    sr.size = new Vector2(pieceWorldWidth, pieceWorldHeight); // 设置卡槽尺寸
+                    sr.drawMode = SpriteDrawMode.Sliced;
+                    sr.size = new Vector2(pieceWorldWidth, pieceWorldHeight);
                 }
                 
                 PuzzleSlot slot = slotObject.GetComponent<PuzzleSlot>();
                 slot.slotId = pieceCounter;
                 puzzleSlots.Add(slot);
 
-                // 从当前选中的 image 中裁剪出像素
+                // 获取 PuzzleSlotOutline 脚本
+                PuzzleSlotOutline slotOutline = slotObject.GetComponent<PuzzleSlotOutline>();
+                if (slotOutline == null)
+                {
+                    Debug.LogError($"卡槽 {slotObject.name} 缺少 PuzzleSlotOutline 组件！请确保你的 slotPrefab 上有此组件。");
+                }
+
+
                 Color[] pixels = image.GetPixels(x * pieceWidth, (rows - 1 - y) * pieceHeight, pieceWidth, pieceHeight);
                 Texture2D pieceTexture = new Texture2D(pieceWidth, pieceHeight);
                 pieceTexture.SetPixels(pixels);
@@ -145,77 +131,104 @@ public class PuzzleManager : MonoBehaviour
 
                 Sprite pieceSprite = Sprite.Create(pieceTexture, new Rect(0, 0, pieceWidth, pieceHeight), new Vector2(0.5f, 0.5f), PPUvalue);
 
-                // 随机放置拼图块
                 float randomX = Random.Range(spawnAreaCenter.position.x - spawnAreaSize.x / 2, spawnAreaCenter.position.x + spawnAreaSize.x / 2);
                 float randomY = Random.Range(spawnAreaCenter.position.y - spawnAreaSize.y / 2, spawnAreaCenter.position.y + spawnAreaSize.y / 2);
                 GameObject pieceObject = Instantiate(piecePrefab, new Vector3(randomX, randomY, 0), Quaternion.identity, pieceAreaParent);
                 pieceObject.name = $"Piece_{x}_{y}";
                 
-                pieceObject.GetComponent<SpriteRenderer>().sprite = pieceSprite;
+                // 拼图块 SpriteRenderer 的设置
+                SpriteRenderer pieceSr = pieceObject.GetComponent<SpriteRenderer>();
+                if (pieceSr != null)
+                {
+                    pieceSr.sprite = pieceSprite;
+                    // 如果你的墨水Shader是应用在Material上，那么这里不需要设置SpriteRenderer的Material
+                    // 如果你希望PuzzlePieceInkEffect控制的是SpriteRenderer的Material，
+                    // 确保 piecePrefab 上的SpriteRenderer使用了一个默认材质，然后PuzzlePieceInkEffect会替换它。
+                    // 或者，确保 piecePrefab 上的SpriteRenderer的Material设置为 Custom/InkSplash Material
+                }
 
-                //BoxCollider2D 的大小
                 BoxCollider2D pieceCollider = pieceObject.GetComponent<BoxCollider2D>();
                 if (pieceCollider != null)
                 {
-                    // 确保碰撞器没有自动缩放
                     pieceCollider.autoTiling = false; 
-                    pieceCollider.offset = Vector2.zero; // 确保碰撞器的中心点与GameObject的中心点对齐
-                    
-                    float colliderPadding = 0.1f; // 增加边距
+                    pieceCollider.offset = Vector2.zero;
+                    float colliderPadding = 0.1f;
                     pieceCollider.size = new Vector2(pieceWorldWidth + colliderPadding, pieceWorldHeight + colliderPadding); 
-                    
                 }
                 else
                 {
-                    Debug.LogWarning($"Piece_{x}_{y} 缺少 BoxCollider2D 组件，无法动态调整碰撞范围。");
+                    Debug.LogWarning($"Piece_{x}_{y} 缺少 BoxCollider2D 组件。");
                 }
                 
-                
-                
-                pieceObject.GetComponent<SpriteRenderer>().sprite = pieceSprite;
-
-                // 关联拼图块和对应的卡槽
                 DraggablePiece draggable = pieceObject.GetComponent<DraggablePiece>();
                 draggable.pieceId = pieceCounter;
-                draggable.targetSlotTransform = slot.transform; // 告诉拼图块它的目标位置
-                draggablePieces.Add(draggable); // 将新生成的拼图块添加到列表中，以便后续检查
+                draggable.targetSlotTransform = slot.transform;
+                draggablePieces.Add(draggable);
+
+                // *** 关键修改：将 PuzzleSlotOutline 引用传递给 DraggablePiece ***
+                if (slotOutline != null)
+                {
+                    draggable.SetTargetSlotOutline(slotOutline);
+                }
 
                 pieceCounter++;
             }
         }
     }
 
-    /// <summary>
-    /// 检查所有公开变量是否已在Inspector中赋值
-    /// </summary>
     private bool AreReferencesAssigned()
     {
-        // 现在主要检查 image 是否有值，因为它才是实际用于生成拼图的图片
-        if (image == null) { Debug.LogError("错误: 当前使用的拼图原图 (image 变量) 为空! 请确保 sourceImageNums 列表或 sourceImage 字段设置正确。"); return false; }
+        if (image == null) { Debug.LogError("错误: 当前使用的拼图原图 (image 变量) 为空! 请确保 sourceImageNums 列表设置正确。"); return false; }
         if (piecePrefab == null) { Debug.LogError("错误: 'Piece Prefab' 未在PuzzleManager中设置!"); return false; }
         if (slotPrefab == null) { Debug.LogError("错误: 'Slot Prefab' 未在PuzzleManager中设置!"); return false; }
         if (pieceAreaParent == null) { Debug.LogError("错误: 'Piece Area Parent' 未在PuzzleManager中设置!"); return false; }
         if (slotAreaParent == null) { Debug.LogError("错误: 'Slot Area Parent' 未在PuzzleManager中设置!"); return false; }
         if (spawnAreaCenter == null) { Debug.LogError("错误: 'Spawn Area Center' 未在PuzzleManager中设置!"); return false; }
+
+        if (slotPrefab != null)
+        {
+            if (slotPrefab.GetComponent<PuzzleSlotOutline>() == null)
+            {
+                Debug.LogError("错误: 'Slot Prefab' 上缺少 PuzzleSlotOutline 脚本! 请确保卡槽预制体上附加了此脚本。");
+                return false;
+            }
+            if (slotPrefab.GetComponent<PuzzleSlotOutline>().baseSlotMaterial == null)
+            {
+                Debug.LogError("错误: 'Slot Prefab' 上的 PuzzleSlotOutline 脚本中 'Base Slot Material' 未设置! 请确保将其拖拽到Inspector中。");
+                return false;
+            }
+        }
+        
+        if (piecePrefab != null)
+        {
+            if (piecePrefab.GetComponent<PuzzlePieceInkEffect>() == null)
+            {
+                Debug.LogError("错误: 'Piece Prefab' 上缺少 PuzzlePieceInkEffect 脚本! 请确保拼图块预制体上附加了此脚本。");
+                return false;
+            }
+            // 确保拼图块的SpriteRenderer使用带有 _InkAmount 属性的材质
+            SpriteRenderer pieceSr = piecePrefab.GetComponent<SpriteRenderer>();
+            if (pieceSr != null && pieceSr.sharedMaterial != null && !pieceSr.sharedMaterial.HasProperty("_InkAmount"))
+            {
+                 Debug.LogError("错误: 'Piece Prefab' 的 SpriteRenderer 材质不包含 '_InkAmount' 属性! 请确保材质使用了 'Custom/InkSplash' Shader。");
+                 return false;
+            }
+        }
+
+
         return true;
     }
 
-    /// <summary>
-    /// 检查拼图是否全部完成
-    /// 应该在每次拼图块放置后调用
-    /// </summary>
     public void CheckPuzzleCompletion()
     {
         foreach (DraggablePiece piece in draggablePieces)
         {
             if (!piece.IsLocked())
             {
-                // 只要有一个拼图块没有锁定，拼图就未完成
                 return; 
             }
         }
  
-        // 如果所有拼图块都已锁定，则拼图完成
         Debug.Log("恭喜! 拼图已全部完成!");
         imgIndex++;
         var imgid = imgIndex - 1;
@@ -225,7 +238,11 @@ public class PuzzleManager : MonoBehaviour
     public void GameStart(int index)
     {
         imgIndex = index;
+        // 重新检查引用，以防游戏过程中有变动
+        if (!AreReferencesAssigned()) {
+            Debug.LogError("无法开始游戏：必要的引用未设置或配置错误。");
+            return;
+        }
         GeneratePuzzle();
-        
     }
 }
