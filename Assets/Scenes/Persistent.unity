@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_text: "{fade d=2}<wave a=0.1 f=0.25>\u70B9\u51FB\u4EFB\u610F\u4F4D\u7F6E\u5F00\u59CB\u6E38\u620F</wave>\r\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
-  m_sharedMaterial: {fileID: -5524946241311891863, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
+  m_sharedMaterial: {fileID: -2914112150779242239, guid: 33a70c94c4ac1f74c9a97a2b899ddd35, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
