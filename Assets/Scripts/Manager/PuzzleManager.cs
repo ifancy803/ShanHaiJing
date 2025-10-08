@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.Events;
 using Random = UnityEngine.Random; // 引入 Random 命名空间是为了明确使用 UnityEngine 的 Random
 
@@ -215,6 +216,13 @@ public class PuzzleManager : MonoBehaviour
         Debug.Log("恭喜! 拼图已全部完成!");
         afterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
         UIManager.Instance.OpenImageListPanel();
+        StartCoroutine(PlayAfterOneSecondallCorrectPlaceSound());
+    }
+
+    IEnumerator PlayAfterOneSecondallCorrectPlaceSound()//等0.2s播放音效
+    {
+        yield return new WaitForSeconds(0.5f);
+        UIAudioManager.Instance.PlaySound(UIAudioManager.Instance.allCorrectPlaceSound);
     }
 
     public void GameStart(int index)

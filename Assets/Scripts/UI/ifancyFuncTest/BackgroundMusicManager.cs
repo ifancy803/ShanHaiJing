@@ -35,6 +35,7 @@ public class BackgroundMusicManager : MonoBehaviour
             lastState = imageListPanel.activeSelf;
             PlayMusicBasedOnPanelState();
         }
+        audioSource.volume = 0.5f;
     }
 
     void Update()
@@ -51,6 +52,8 @@ public class BackgroundMusicManager : MonoBehaviour
 
     void PlayMusicBasedOnPanelState()
     {
+        audioSource.volume = 0.5f; // ✅ 确保每次切换音乐时音量维持在 0.5
+        
         if (imageListPanel.activeSelf)
         {
             if (audioSource.clip != music1)
