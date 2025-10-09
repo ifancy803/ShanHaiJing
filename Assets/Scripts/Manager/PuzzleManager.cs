@@ -215,7 +215,6 @@ public class PuzzleManager : MonoBehaviour
         // 如果所有拼图块都已锁定，则拼图完成
         Debug.Log("恭喜! 拼图已全部完成!");
         afterPuzzleCompletionEvent.RaiseEvent(imgIndex, this);
-        UIManager.Instance.OpenImageListPanel();
         StartCoroutine(PlayAfterOneSecondallCorrectPlaceSound());
     }
 

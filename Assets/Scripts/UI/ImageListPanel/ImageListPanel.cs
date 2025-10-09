@@ -85,7 +85,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float selectItemX;
     private bool isSelectMove;
 
-    private bool isOpenDescription = false;
+    public bool isOpenDescription = false;
 
     // 屏幕适配相关变量
     private float screenScale = 1f;
