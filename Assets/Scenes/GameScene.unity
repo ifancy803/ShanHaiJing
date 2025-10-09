@@ -182,17 +182,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sourceImageNums:
   - {fileID: 2800000, guid: 1a91c834ba0ffab40820ec2a857eb83f, type: 3}
-  - {fileID: 2800000, guid: f429acbbe7d965a4d88f02d22aa1607e, type: 3}
+  - {fileID: 2800000, guid: 0f4e4edfa7826ca408792a05ee9d744b, type: 3}
   - {fileID: 2800000, guid: ccf7eefc4517b6d4ba26d4dad33158df, type: 3}
   - {fileID: 2800000, guid: 8347975cda2c15e4ab5941dd222964e1, type: 3}
   - {fileID: 2800000, guid: 854525d1fe50096458a3dbfd12465c84, type: 3}
-  - {fileID: 2800000, guid: 5316801d4416958469c93cdef978c710, type: 3}
+  - {fileID: 2800000, guid: 3f64a99fba55a3b47a445d2aa513fa10, type: 3}
   - {fileID: 2800000, guid: 9bd566fcf0839e24ab82f86938debe79, type: 3}
-  - {fileID: 2800000, guid: 4e153b3ab8f954d41935f271ffcde15b, type: 3}
+  - {fileID: 2800000, guid: 3b279712c0a8a534985fd9a4cc6708f0, type: 3}
   - {fileID: 2800000, guid: 720b36081a7e4064b890f603d1cc3234, type: 3}
   rows: 5
   cols: 5
-  PPUvalue: 300
+  PPUvalue: 20
   piecePrefab: {fileID: 4598890856990747899, guid: 5260a811b68301a4389ee40441492e25, type: 3}
   slotPrefab: {fileID: 7961442579909042726, guid: 1e1ac1bbdc1dd594783a9d8a30346177, type: 3}
   pieceAreaParent: {fileID: 165811311}
