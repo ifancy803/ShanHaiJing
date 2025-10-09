@@ -75,9 +75,6 @@ public class DraggablePiece : MonoBehaviour
             // 距离足够近, 自动吸附到卡槽位置
             transform.position = targetSlotTransform.position;
             
-            // 在成功吸附到目标时播放音效
-            UIAudioManager.Instance.PlaySound(UIAudioManager.Instance.correctPlaceSound);
-
             // 只有当之前未锁定，现在才锁定，才执行逻辑并通知 Manager
             if (!isLocked) 
             {

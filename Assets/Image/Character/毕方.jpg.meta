@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3b279712c0a8a534985fd9a4cc6708f0
+guid: 4e153b3ab8f954d41935f271ffcde15b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1784210205211346573
-    second: "\b"
+      213: -8132331423490473411
+    second: "\u5FAE\u4FE1\u56FE\u7247_20251009154945_13_5_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 2
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -72,10 +72,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 128
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "s\r"
+      name: "\u5FAE\u4FE1\u56FE\u7247_20251009154945_13_5_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1036
-        height: 1036
+        width: 1280
+        height: 1280
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d86cf3e7ab9c2c810800000000000000
-      internalID: 1784210205211346573
+      spriteID: d328a1348a7242f80800000000000000
+      internalID: -8132331423490473411
       vertices: []
       indices: 
       edges: []
@@ -135,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "s\r": 1784210205211346573
-      "\u6BD5\u65B9_0": 1784210205211346573
+      "\u5FAE\u4FE1\u56FE\u7247_20251009154945_13_5_0": -8132331423490473411
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

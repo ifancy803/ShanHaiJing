@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UIManager : Singleton<UIManager>
 {
-    public ImageListPanel imageListPanel;
+    public GameObject imageListPanel;
     public SimpleSoftShrink menuPanel;
     public FadePanel fadePanel;
     public ArrayList picIndexList = new ArrayList();
@@ -15,14 +15,14 @@ public class UIManager : Singleton<UIManager>
     public void OpenImageListPanel()
     {
         fadePanel.FadeOut();
-        ToggleScale(imageListPanel.gameObject,Ease.InOutQuart,true,1);
+        ToggleScale(imageListPanel,Ease.InOutQuart,true,1);
     }
 
     [ContextMenu("关闭角色选择面板")]
     public void CloseImageListPanel()
     {
         closeImageListPanelEvent.RaiseEvent(null,this);
-        ToggleScale(imageListPanel.gameObject,Ease.InElastic,false,1); 
+        ToggleScale(imageListPanel,Ease.InElastic,false,1); 
     }
     
     /// <summary>
@@ -45,7 +45,7 @@ public class UIManager : Singleton<UIManager>
     private void ScaleDown(GameObject obj,Ease et,float duration)
     {
         if (obj == null) return;
-        imageListPanel.gameObject.SetActive(true);
+        imageListPanel.SetActive(true);
         obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         obj.transform.DOKill();
         obj.transform.DOScale(Vector3.zero, duration).SetEase(et).OnComplete(() => obj.SetActive(false));
@@ -76,14 +76,6 @@ public class UIManager : Singleton<UIManager>
         if(index<0)
             return;
         picIndexList.Add(index);
-        OpenImageListPanel();
-        imageListPanel.descriptionBar.SetActive(true);
-        imageListPanel.descriptionBar.transform.localScale = Vector3.zero;
-        // 停止当前可能在播放的动画
-        imageListPanel.descriptionBar.transform.DOKill();
-        
-        imageListPanel.descriptionBar.transform.DOScale(Vector3.one,0.5f).SetEase(Ease.InOutQuart);
-        imageListPanel.isOpenDescription = true;
     }
     
     [ContextMenu("测试3")]
