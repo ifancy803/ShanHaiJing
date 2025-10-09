@@ -85,7 +85,7 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float selectItemX;
     private bool isSelectMove;
 
-    private bool isOpenDescription = false;
+    public bool isOpenDescription = false;
 
     // 屏幕适配相关变量
     private float screenScale = 1f;
@@ -357,7 +357,13 @@ public class ImageListPanel : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         if (canClick)
         {
             isOpenDescription = true;
-            UIManager.Instance.ToggleScale(descriptionBar, Ease.InOutQuart, true, 0.5f);
+            if(descriptionBar == null) return;
+            descriptionBar.SetActive(true);
+            descriptionBar.transform.localScale = Vector3.zero;
+            // 停止当前可能在播放的动画
+            descriptionBar.transform.DOKill();
+        
+            descriptionBar.transform.DOScale(Vector3.one,0.5f).SetEase(Ease.InOutQuart);
         }
         else
         {
