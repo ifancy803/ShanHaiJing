@@ -77,13 +77,15 @@ public class UIManager : Singleton<UIManager>
             return;
         picIndexList.Add(index);
         OpenImageListPanel();
-        imageListPanel.descriptionBar.SetActive(true);
-        imageListPanel.descriptionBar.transform.localScale = Vector3.zero;
-        // 停止当前可能在播放的动画
-        imageListPanel.descriptionBar.transform.DOKill();
         
-        imageListPanel.descriptionBar.transform.DOScale(Vector3.one,0.5f).SetEase(Ease.InOutQuart);
-        imageListPanel.isOpenDescription = true;
+        // imageListPanel.descriptionBar.transform.localScale = Vector3.zero;
+        // // 停止当前可能在播放的动画
+        // imageListPanel.descriptionBar.transform.DOKill();
+        //
+        // imageListPanel.descriptionBar.SetActive(true);
+        //
+        // imageListPanel.descriptionBar.transform.DOScale(Vector3.one,0.5f).SetEase(Ease.InOutQuart);
+        // imageListPanel.isOpenDescription = true;
     }
     
     [ContextMenu("测试3")]
