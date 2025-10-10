@@ -22,7 +22,9 @@ public class SettingPanel : MonoBehaviour
     void OpenImg()
     {
         quitGameImg.SetActive(true);
-        UIManager.Instance.ToggleScale(quitGameImg,Ease.InOutQuart,true,0.5f);
+        //UIManager.Instance.ToggleScale(quitGameImg,Ease.InOutQuart,true,0.5f);
+        
+        UIManager.Instance.ScaleUp(quitGameImg,Ease.InOutQuart,0.5f);
     }
     
     void CloseImg()

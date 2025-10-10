@@ -28,7 +28,7 @@ public class UIManager : Singleton<UIManager>
     /// <summary>
     /// 放大 Panel
     /// </summary>
-    private void ScaleUp(GameObject obj,Ease et,float duration)
+    public void ScaleUp(GameObject obj,Ease et,float duration)
     {
         if(obj == null) return;
         obj.SetActive(true);
