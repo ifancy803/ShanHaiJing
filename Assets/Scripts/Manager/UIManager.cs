@@ -82,10 +82,10 @@ public class UIManager : Singleton<UIManager>
         // // 停止当前可能在播放的动画
         // imageListPanel.descriptionBar.transform.DOKill();
         //
-        // imageListPanel.descriptionBar.SetActive(true);
+        imageListPanel.descriptionBar.SetActive(true);
         //
         // imageListPanel.descriptionBar.transform.DOScale(Vector3.one,0.5f).SetEase(Ease.InOutQuart);
-        // imageListPanel.isOpenDescription = true;
+        imageListPanel.isOpenDescription = true;
     }
     
     [ContextMenu("测试3")]
