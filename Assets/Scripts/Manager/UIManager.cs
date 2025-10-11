@@ -78,7 +78,7 @@ public class UIManager : Singleton<UIManager>
         picIndexList.Add(index);
         OpenImageListPanel();
         imageListPanel.descriptionBar.SetActive(true);
-        ScaleUp(imageListPanel.descriptionBar,Ease.InOutQuart,1);
+        imageListPanel.descriptionBar.transform.localScale = Vector3.one;
         imageListPanel.isOpenDescription = true;
     }
     
