@@ -77,14 +77,8 @@ public class UIManager : Singleton<UIManager>
             return;
         picIndexList.Add(index);
         OpenImageListPanel();
-        
-        // imageListPanel.descriptionBar.transform.localScale = Vector3.zero;
-        // // 停止当前可能在播放的动画
-        // imageListPanel.descriptionBar.transform.DOKill();
-        //
         imageListPanel.descriptionBar.SetActive(true);
-        //
-        // imageListPanel.descriptionBar.transform.DOScale(Vector3.one,0.5f).SetEase(Ease.InOutQuart);
+        ScaleUp(imageListPanel.descriptionBar,Ease.InOutQuart,1);
         imageListPanel.isOpenDescription = true;
     }
     
